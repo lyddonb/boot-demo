@@ -1,0 +1,105 @@
+module Main (..) where
+
+import Debug
+import Task exposing (Task)
+
+import Effects exposing (Effects)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+import StartApp
+
+import RouteHash exposing (HashUpdate)
+
+import Actions exposing (..)
+import Menu.Menu exposing (menu)
+import Models exposing (..)
+import Update exposing (..)
+import View exposing (..)
+
+import Page1.Page exposing (delta2update, location2action)
+import Page2.Page exposing (delta2update, location2action)
+
+
+
+-- RUN THIS SUCKA!
+
+{- This is needed for the router (route-hash) to get it's mailbox into StartApp
+-}
+messages : Signal.Mailbox Action
+messages =
+  Signal.mailbox NoOp
+
+init : (AppModel, Effects Action)
+init =
+  let
+      fxs =
+        [ --Effects.map PlayersAction Players.Effects.fetchAll
+        ]
+
+      fx =
+        Effects.batch fxs
+  in
+    (initialModel, fx)
+
+app : StartApp.App AppModel
+app =
+  StartApp.start
+   { init = init
+   , inputs = [ messages.signal
+              ]
+   , update = update
+   , view = view
+   }
+
+main : Signal.Signal Html.Html
+main =
+  app.html
+
+
+-- ROUTER
+
+delta2update : AppModel -> AppModel -> Maybe HashUpdate
+delta2update previous current =
+  case (Debug.log "Current Page: " current.currentPage) of
+    Page1 ->
+      -- First, we ask the submodule for a HashUpdate. Then, we use
+      -- `map` to prepend something to the URL.
+      RouteHash.map ((::) "page-1") <|
+        Page1.Page.delta2update previous.page1 current.page1
+
+    Page2 ->
+      RouteHash.map ((::) "page-2") <|
+        Page2.Page.delta2update previous.page2 current.page2
+
+location2action : List String -> List Action
+location2action list =
+  case (Debug.log "Page Location: " list) of
+    "page-1" :: rest ->
+      -- We give the Page1 module a chance to interpret the rest of
+      -- the URL, and then we prepend an action for the part we
+      -- interpreted.
+      ( ShowPage Page1 ) :: List.map Page1Action ( 
+        Page1.Page.location2action rest )
+    
+    "page-2" :: rest ->
+      ( ShowPage Page2 ) :: List.map Page2Action ( 
+        Page2.Page.location2action rest )
+
+    _ ->
+      ( ShowPage Page1 ) :: List.map Page1Action ( 
+        Page1.Page.location2action [] )
+
+port routeTasks : Signal (Task () ())
+port routeTasks =
+    RouteHash.start
+        { prefix = RouteHash.defaultPrefix
+        , models = app.model
+        , delta2update = delta2update 
+        , address = messages.address
+        , location2action = location2action
+        }
+
+
+
