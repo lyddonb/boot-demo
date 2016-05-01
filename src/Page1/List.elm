@@ -62,7 +62,7 @@ userRow : Signal.Address Page1Action -> Page1Model -> User -> Html.Html
 userRow address model user =
   tr
     []
-    [ td [] [ text "AN ID" ]
+    [ td [] [ text (toString user.id) ]
     , td [] [ text user.name ]
     , td [] [ text user.email ]
     , td [] [ text (toString user.admin) ]
@@ -80,7 +80,7 @@ editBtn address user =
     , type' "button"
     , attribute "data-toggle" "modal"
     , attribute "data-target" "#userEditModal"
-    , onClick address (EditUser user)
+    , onClick address (EditUser user.id)
     ]
     [ i [class "fa fa-pencil mr1" ] [], text "Edit" ]
 

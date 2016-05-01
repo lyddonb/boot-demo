@@ -2,12 +2,18 @@ module Page1.Update (..) where
 
 import Debug
 
+import List exposing (head, filter, foldr)
+
 import Effects exposing (Effects)
 
 import Form exposing (Form)
 
 import Page1.Actions exposing (..)
 import Page1.Models exposing (..)
+
+getItemById : List { a | id : ID } -> ID -> Maybe { a | id : ID }
+getItemById users id =
+  head (filter (\i -> i.id == id) users)
 
 update : Page1Action -> Page1Model -> ( Page1Model, Effects Page1Action )
 update action model =
@@ -21,21 +27,43 @@ update action model =
     ModalFormAction formAction ->
       ({ model | modalForm = Form.update formAction model.modalForm}, Effects.none)
 
+    -- Save the new user
     SubmitPageUser user ->
       let
-        updatedCollection = 
-          user :: model.users
-      in
-        ({ model | pageUser = Just user, users = updatedCollection }, Effects.none)
+        -- HACK: Until we persist we need to get a new ID
+        newId = foldr (\a b -> if a.id > b then a.id else b) 0 model.users
 
+        updatedCollection = 
+          { user | id = newId + 1 } :: model.users
+      in
+        ({ model | pageUser = Nothing
+          , pageForm = Form.initial initialFields validate
+          , users = updatedCollection }, Effects.none)
+
+    -- Save the modified user
     SubmitModalUser user ->
       let
-        updatedCollection = 
-          user :: model.users
-      in
-        ({ model | modalUser = Just user, users = updatedCollection }, Effects.none)
+        updatedUser existing =
+          if existing.id == user.id then
+             user
+          else
+             existing
 
-    EditUser user ->
-      ( { model | modalUser = Just user
-        , modalForm = Form.initial (setFormFields user) validate }
-      , Effects.none )
+        updatedCollection =
+          List.map updatedUser model.users
+      in
+        ( { model | modalUser = Just user, users = updatedCollection }
+        , Effects.none)
+
+    -- Edit an existing user
+    EditUser userId ->
+      case (getItemById model.users userId) of
+        Just user ->
+          ( { model | modalUser = Just user
+            , modalForm = Form.initial (setFormFields user) validate }
+          , Effects.none )
+
+        Nothing ->
+          ( { model | modalUser = Nothing
+            , modalForm = Form.initial initialFields validate }
+          , Effects.none )

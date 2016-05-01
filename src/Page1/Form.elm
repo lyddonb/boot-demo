@@ -151,6 +151,7 @@ modalFormHandler address submit maybeUser =
         [ button
           [ submit
           , class "btn btn-primary"
+          , attribute "data-dismiss" "modal"
           ]
           [ text "Submit" ]
         --, text " "

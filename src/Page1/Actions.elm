@@ -2,7 +2,7 @@ module Page1.Actions (..) where
 
 import Form exposing (Form)
 
-import Page1.Models exposing (User)
+import Page1.Models exposing (ID, User)
 
 type Page1Action
   = NoOp
@@ -10,4 +10,4 @@ type Page1Action
   | ModalFormAction Form.Action
   | SubmitPageUser User
   | SubmitModalUser User
-  | EditUser User
+  | EditUser ID
