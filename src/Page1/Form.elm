@@ -85,7 +85,10 @@ formComponent formAddress address form userMaybe =
  in
     div
       [ class "form-horizontal" ]
-      [ textGroup "Name" formAddress
+      [ spanGroup "Id" formAddress
+        (Form.getFieldAsString "id" form)
+        
+      , textGroup "Name" formAddress
         (Form.getFieldAsString "name" form)
 
       , textGroup "Email address" formAddress

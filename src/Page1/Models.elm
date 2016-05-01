@@ -1,12 +1,16 @@
 module Page1.Models (..) where
 
+import String
 import Maybe exposing (withDefault)
 
 import Effects exposing (Effects)
 
 import Form exposing (Form)
+import Form.Error as Error exposing (Error(InvalidInt))
 import Form.Field as Field
 import Form.Validate as Validate exposing (..)
+
+type alias ID = Int
 
 type alias Page1Model = 
   { pageForm : Form CustomError User
@@ -23,7 +27,8 @@ type CustomError
   | InvalidSuperpower
 
 type alias User =
-  { name : String
+  { id : ID
+  , name : String
   , email : String
   , admin : Bool
   , profile : Profile
@@ -58,14 +63,15 @@ initialFields =
 
 setFormFields : User -> List ( String, Field.Field )
 setFormFields user =
-  [ ( "name", Field.Text user.name )
+  [ ( "id", Field.Text ( toString user.id ) )
+  , ( "name", Field.Text user.name )
   , ( "email", Field.Text user.email )
   , ( "admin", Field.Check user.admin )
   , ( "profile", Field.group
       [ ( "website", Field.Text (withDefault "" user.profile.website) ) 
       , ( "role", Field.Select user.profile.role )
       , ( "superpower", Field.Radio (superpowerToString user.profile.superpower) )
-      , ( "age", Field.Text (toString user.profile.age ) )
+      , ( "age", Field.Text ( toString user.profile.age ) )
       , ( "bio", Field.Text user.profile.bio )
       ]
     )
@@ -87,7 +93,8 @@ init =
   , modalForm = Form.initial initialFields validate
   , pageUser = Nothing 
   , modalUser = Nothing
-  , users = [ { name = "Beau"
+  , users = [ { id = 1
+              , name = "Beau"
               , email = "lyddonb@gmail.com"
               , admin = True
               , profile = { website = Just "http://www.google.com"
@@ -96,7 +103,7 @@ init =
                           , age = 21
                           , bio = "The man!"
                           }
-              } 
+              }
             ]
   }
 
@@ -111,10 +118,24 @@ infixl 7 :=
 (|:) =
   Validate.apply
 
+{-| Return 0 for no ID as this input is not editable and Nothing is equivalent 
+to a new entry.
+-}
+idValidator : Validation e Int
+idValidator v =
+  case Field.asString v of
+    Just s ->
+      if s == "NEW" then (Ok 0) else String.toInt s
+         |> Result.formatError (\_ -> InvalidInt)
+
+    Nothing ->
+      Ok 0
+
 validate : Validation CustomError User
 validate =
-  form4
+  form5
     User
+    ("id" := idValidator)
     ("name" := string `andThen` nonEmpty)
     ("email" := email `andThen` (asyncCheck True))
     ("admin" := bool |> defaultValue False)

@@ -7,7 +7,7 @@ import Html.Events exposing (..)
 import Form exposing (Form, FieldState, Action (Focus, Blur))
 import Form.Input as Input exposing (..)
 import Form.Error exposing (Error)
-import Form.Field exposing (Field(Radio))
+import Form.Field exposing (Field(Radio, Text))
 
 import Page1.Models exposing (..)
 
@@ -41,6 +41,18 @@ formActions content =
   row
     [ div [ class "col-xs-offset-3 col-xs-9" ] content ]
 
+hiddenInput : Input e String
+hiddenInput =
+  Input.baseInput "hidden" Text
+
+spanGroup : GroupBuilder String
+spanGroup label' address state =
+  formGroup label' state.liveError
+    [ hiddenInput state address [ class "form-control" ]
+    , span
+        [ ]
+        [ text (Maybe.withDefault "NEW" state.value) ]
+    ]
 
 textGroup : GroupBuilder String
 textGroup label' address state =
