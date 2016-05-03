@@ -50,7 +50,7 @@ header address model =
 -- TODO: Switch to checking the model for the "active" page
 link : Signal.Address Action -> AppModel -> Page -> Html.Html
 link address model page =
-  if page == model.currentPage then
+  if page == model.pages.currentPage then
     activeLink address model page
   else
     inactiveLink address model page

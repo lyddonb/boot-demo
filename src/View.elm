@@ -16,12 +16,12 @@ view : Signal.Address Action -> AppModel -> Html.Html
 view address model =
   let
     mainView =
-      case model.currentPage of
+      case model.pages.currentPage of
         Page1 ->
-          Page1.Page.view (forwardTo address Page1Action) model.page1
+          Page1.Page.view (forwardTo address Page1Action) model.pages.page1
 
         Page2 ->
-          Page2.Page.view (forwardTo address Page2Action) model.page2
+          Page2.Page.view (forwardTo address Page2Action) model.pages.page2
  in
     div
       [ class "container" ]

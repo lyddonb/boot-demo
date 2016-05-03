@@ -62,16 +62,16 @@ main =
 
 delta2update : AppModel -> AppModel -> Maybe HashUpdate
 delta2update previous current =
-  case (Debug.log "Current Page: " current.currentPage) of
+  case (Debug.log "Current Page: " current.pages.currentPage) of
     Page1 ->
       -- First, we ask the submodule for a HashUpdate. Then, we use
       -- `map` to prepend something to the URL.
       RouteHash.map ((::) "page-1") <|
-        Page1.Page.delta2update previous.page1 current.page1
+        Page1.Page.delta2update previous.pages.page1 current.pages.page1
 
     Page2 ->
       RouteHash.map ((::) "page-2") <|
-        Page2.Page.delta2update previous.page2 current.page2
+        Page2.Page.delta2update previous.pages.page2 current.pages.page2
 
 location2action : List String -> List Action
 location2action list =
