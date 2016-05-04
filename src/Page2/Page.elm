@@ -1,6 +1,5 @@
 module Page2.Page (..) where
 
-import Effects exposing (Effects)
 import String exposing (toInt)
 
 import Html exposing (..)
@@ -8,19 +7,8 @@ import Html.Attributes exposing (..)
 
 import RouteHash exposing (HashUpdate)
 
-type alias Page2Model = {}
-
-init : Page2Model
-init = {}
-
-type Page2Action
-  = NoOp
-
-update : Page2Action -> Page2Model -> ( Page2Model, Effects Page2Action )
-update action model =
-  case action of
-    NoOp ->
-      ( model, Effects.none )
+import Page2.Actions exposing (..)
+import Page2.Models exposing (..)
 
 view : Signal.Address Page2Action -> Page2Model -> Html
 view address model =

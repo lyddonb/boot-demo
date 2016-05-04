@@ -7,11 +7,13 @@ import Actions exposing (..)
 import Models exposing (..)
 
 import Page1.Actions exposing (..)
-import Page1.Update exposing (update)
-import Page2.Page exposing (Page2Action, update)
-
 import Page1.Models exposing (Page1Model)
-import Page2.Page exposing (Page2Model)
+import Page1.Update exposing (update)
+
+import Page2.Actions exposing (..)
+import Page2.Models exposing (Page2Model)
+import Page2.Update exposing (update)
+
 
 update : Actions.Action -> AppModel -> ( AppModel, Effects Actions.Action )
 update action model =
@@ -41,6 +43,6 @@ update action model =
     Page2Action subAction ->
       let
         ( pageModel, fx ) =
-          Page2.Page.update subAction model.pages.page2
+          Page2.Update.update subAction model.pages.page2
       in
         ( set (pages => page2) pageModel model, Effects.map Page2Action fx )
