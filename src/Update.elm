@@ -25,10 +25,18 @@ update action model =
 
     Page1Action subAction ->
       let
+        pModel = model.pages.page1
+
+        -- Pass the users from the AppModel down to the Page1Model
         ( pageModel, fx ) =
-          Page1.Update.update subAction model.pages.page1
+          Page1.Update.update subAction ({ pModel | users = model.entities.users })
+
+        -- Update page1 and users on the AppModel
+        updatedModel = model
+                        |> set (pages => page1) pageModel
+                        |> set (entities => users) pageModel.users
       in
-        ( set (pages => page1) pageModel model, Effects.map Page1Action fx )
+        ( updatedModel, Effects.map Page1Action fx )
         
     Page2Action subAction ->
       let

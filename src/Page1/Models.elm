@@ -86,6 +86,20 @@ superpowers : List String
 superpowers =
   [ "flying", "invisible" ]
 
+initialUsers : Dict ID User
+initialUsers = 
+  Dict.insert 1 { id = 1
+                , name = "Beau"
+                , email = "lyddonb@gmail.com"
+                , admin = True
+                , profile = { website = Just "http://www.google.com"
+                            , role = "role1"
+                            , superpower = Flying
+                            , age = 21
+                            , bio = "The man!"
+                            }
+                } 
+                Dict.empty
 
 -- TODO: Kill the init model
 init : Page1Model
@@ -94,18 +108,7 @@ init =
   , modalForm = Form.initial initialFields validate
   , pageUser = Nothing 
   , modalUser = Nothing
-  , users = Dict.insert 1 { id = 1
-              , name = "Beau"
-              , email = "lyddonb@gmail.com"
-              , admin = True
-              , profile = { website = Just "http://www.google.com"
-                          , role = "role1"
-                          , superpower = Flying
-                          , age = 21
-                          , bio = "The man!"
-                          }
-              }
-            Dict.empty
+  , users = initialUsers
   }
 
 -- VALIDATION

@@ -1,8 +1,10 @@
 module Models (..) where
 
+import Dict exposing (Dict)
+
 import Focus exposing (..)
 
-import Page1.Models exposing (Page1Model, init)
+import Page1.Models exposing (Page1Model, init, ID, User, initialUsers)
 import Page2.Page exposing (Page2Model, init)
 
 type Page
@@ -15,8 +17,12 @@ type alias Pages =
   , currentPage : Page
   }
 
+type alias Entities =
+  { users : Dict Page1.Models.ID Page1.Models.User }
+
 type alias AppModel =
   { pages : Pages
+  , entities : Entities
   }
 
 initialPages : Pages
@@ -26,9 +32,14 @@ initialPages =
   , currentPage = Page1
   }
 
+initialEntities : Entities
+initialEntities =
+  { users = initialUsers }
+
 initialModel : AppModel
 initialModel =
   { pages = initialPages
+  , entities = initialEntities
   }
 
 pages : Focus { r | pages:a } a
@@ -42,3 +53,9 @@ page2 = create .page2 (\f r -> { r | page2 = f r.page2 })
 
 currentPage : Focus { r | currentPage:a } a
 currentPage = create .currentPage (\f r -> { r | currentPage = f r.currentPage })
+
+entities : Focus { r | entities:a } a
+entities = create .entities (\f r -> { r | entities = f r.entities })
+
+users : Focus { r | users:a } a
+users = create .users (\f r -> { r | users = f r.users })
