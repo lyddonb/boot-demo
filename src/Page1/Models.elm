@@ -1,5 +1,6 @@
 module Page1.Models (..) where
 
+import Dict exposing (Dict)
 import String
 import Maybe exposing (withDefault)
 
@@ -17,7 +18,7 @@ type alias Page1Model =
   , modalForm : Form CustomError User
   , pageUser : Maybe User
   , modalUser : Maybe User
-  , users : List User
+  , users : Dict ID User
   }
 
 type CustomError
@@ -93,7 +94,7 @@ init =
   , modalForm = Form.initial initialFields validate
   , pageUser = Nothing 
   , modalUser = Nothing
-  , users = [ { id = 1
+  , users = Dict.insert 1 { id = 1
               , name = "Beau"
               , email = "lyddonb@gmail.com"
               , admin = True
@@ -104,7 +105,7 @@ init =
                           , bio = "The man!"
                           }
               }
-            ]
+            Dict.empty
   }
 
 -- VALIDATION

@@ -2,13 +2,15 @@ module Page1.Update (..) where
 
 import Debug
 
-import List exposing (head, filter, foldr)
+import Dict exposing (Dict)
 
 import Effects exposing (Effects)
 
+import Maybe exposing (withDefault)
+
 import Form exposing (Form)
 
-import List.Extra exposing (find)
+import List.Extra exposing (find, last)
 
 import Page1.Actions exposing (..)
 import Page1.Models exposing (..)
@@ -29,10 +31,11 @@ update action model =
     SubmitPageUser user ->
       let
         -- HACK: Until we persist we need to get a new ID
-        newId = foldr (\a b -> if a.id > b then a.id else b) 0 model.users
+        newId = (Dict.keys model.users
+                  |> last
+                  |> withDefault 0) + 1
 
-        updatedCollection = 
-          { user | id = newId + 1 } :: model.users
+        updatedCollection = Dict.insert (newId) {user | id = newId} model.users
       in
         ({ model | pageUser = Nothing
           , pageForm = Form.initial initialFields validate
@@ -41,21 +44,14 @@ update action model =
     -- Save the modified user
     SubmitModalUser user ->
       let
-        updatedUser existing =
-          if existing.id == user.id then
-             user
-          else
-             existing
-
-        updatedCollection =
-          List.map updatedUser model.users
+        updatedCollection = Dict.insert (user.id) user model.users
       in
         ( { model | modalUser = Just user, users = updatedCollection }
         , Effects.none)
 
     -- Edit an existing user
     EditUser userId ->
-      case (find (\u -> u.id == userId) model.users) of
+      case (Dict.get userId model.users) of
         Just user ->
           ( { model | modalUser = Just user
             , modalForm = Form.initial (setFormFields user) validate }

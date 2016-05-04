@@ -1,5 +1,7 @@
 module Page1.List (..) where
 
+import Dict exposing (Dict)
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -54,7 +56,10 @@ list address model =
           , th [] [ text "Actions" ]
           ]
         ]
-        , tbody [] (List.map (userRow address model) model.users)
+        , Dict.values model.users
+          |> List.reverse
+          |> List.map (userRow address model)
+          |> tbody []
       ]
     ]
 
