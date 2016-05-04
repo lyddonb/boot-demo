@@ -8,12 +8,10 @@ import Effects exposing (Effects)
 
 import Form exposing (Form)
 
+import List.Extra exposing (find)
+
 import Page1.Actions exposing (..)
 import Page1.Models exposing (..)
-
-getItemById : List { a | id : ID } -> ID -> Maybe { a | id : ID }
-getItemById users id =
-  head (filter (\i -> i.id == id) users)
 
 update : Page1Action -> Page1Model -> ( Page1Model, Effects Page1Action )
 update action model =
@@ -57,7 +55,7 @@ update action model =
 
     -- Edit an existing user
     EditUser userId ->
-      case (getItemById model.users userId) of
+      case (find (\u -> u.id == userId) model.users) of
         Just user ->
           ( { model | modalUser = Just user
             , modalForm = Form.initial (setFormFields user) validate }
