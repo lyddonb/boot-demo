@@ -7,11 +7,11 @@ import Maybe exposing (withDefault)
 import Effects exposing (Effects)
 
 import Form exposing (Form)
-import Form.Error as Error exposing (Error(InvalidInt))
 import Form.Field as Field
+import Form.Infix exposing ((:=), (|:))
 import Form.Validate as Validate exposing (..)
 
-type alias ID = Int
+import Identifier exposing (ID, idValidator)
 
 type alias Page1Model = 
   { pageForm : Form CustomError User
@@ -112,28 +112,6 @@ init =
   }
 
 -- VALIDATION
-
-{-| Infix operators. See elm-simple-form-infix for a packaged version.
--}
-(:=) =
-  Validate.get
-infixl 7 :=
-
-(|:) =
-  Validate.apply
-
-{-| Return 0 for no ID as this input is not editable and Nothing is equivalent 
-to a new entry.
--}
-idValidator : Validation e Int
-idValidator v =
-  case Field.asString v of
-    Just s ->
-      if s == "NEW" then (Ok 0) else String.toInt s
-         |> Result.formatError (\_ -> InvalidInt)
-
-    Nothing ->
-      Ok 0
 
 validate : Validation CustomError User
 validate =

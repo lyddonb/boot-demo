@@ -4,7 +4,9 @@ import Dict exposing (Dict)
 
 import Focus exposing (..)
 
-import Page1.Models exposing (Page1Model, init, ID, User, initialUsers)
+import Identifier exposing (ID)
+
+import Page1.Models exposing (Page1Model, init, User, initialUsers)
 import Page2.Models exposing (Page2Model, init)
 
 type Page
@@ -18,7 +20,7 @@ type alias Pages =
   }
 
 type alias Entities =
-  { users : Dict Page1.Models.ID Page1.Models.User }
+  { users : Dict ID Page1.Models.User }
 
 type alias AppModel =
   { pages : Pages

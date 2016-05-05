@@ -2,7 +2,9 @@ module Page1.Actions (..) where
 
 import Form exposing (Form)
 
-import Page1.Models exposing (ID, User)
+import Identifier exposing (ID)
+
+import Page1.Models exposing (User)
 
 type Page1Action
   = NoOp
