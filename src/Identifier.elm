@@ -8,6 +8,8 @@ import Form.Validate as Validate exposing (..)
 
 type alias ID = Int
 
+-- TODO: Figure out how to swtich InvalidInt to an InvalidID error type
+
 {-| Return 0 for no ID as this input is not editable and Nothing is equivalent 
 to a new entry.
 -}
@@ -20,5 +22,3 @@ idValidator v =
 
     Nothing ->
       Ok 0
-
-

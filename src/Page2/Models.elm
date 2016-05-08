@@ -35,11 +35,22 @@ validateUserId : Validation CustomError ID
 validateUserId v =
   case Field.asString v of
     Just s ->
-      if s == "NEW" then (Ok 0) else String.toInt s
-         |> Result.formatError (\_ -> InvalidInt)
+      String.toInt s 
+        |> isValidUser
+        |> Result.formatError (\_ -> InvalidInt)
 
     Nothing ->
       Ok 0
+
+isValidUser : Result String Int -> Result String ID
+isValidUser res =
+  case res of
+    Ok v ->
+      -- TODO: Check dict of users to see if it exists
+      Ok v
+
+    Err err ->
+      Err err
 
 validate : Validation CustomError Thing
 validate =
