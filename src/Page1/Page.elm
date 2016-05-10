@@ -29,7 +29,6 @@ panel address model panelView title =
       [ class "panel-body" ]
       [ panelView address model ]
     ]
-  
 
 view : Signal.Address Page1Action -> Page1Model -> Html
 view address model =
@@ -38,7 +37,6 @@ view address model =
     [ panel address model pageForm "Add a User"
     , panel address model listView "View Users"
     ]
-    
 
 delta2update : Page1Model -> Page1Model -> Maybe HashUpdate
 delta2update previous current =

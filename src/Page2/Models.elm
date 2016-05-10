@@ -2,6 +2,9 @@ module Page2.Models (..) where
 
 import Dict exposing (Dict)
 
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
 import String
 
 import Form exposing (Form)
@@ -12,13 +15,16 @@ import Form.Validate as Validate exposing (..)
 
 import Identifier exposing (ID, idValidator)
 
-type alias Page2Model = 
-  { pageForm : Form CustomError Thing
-  , modalForm : Form CustomError Thing
-  , pageThing : Maybe Thing
-  , modalThing : Maybe Thing
-  , things : Dict ID Thing
-  }
+import Layout.Bootstrap exposing (..)
+import Layout.Models exposing (..)
+
+type alias Page2Model = LayoutModel Thing CustomError
+  --{ pageForm : Form CustomError Thing
+  --, modalForm : Form CustomError Thing
+  --, pageThing : Maybe Thing
+  --, modalThing : Maybe Thing
+  --, things : Dict ID Thing
+  --}
 
 type CustomError
   = Ooops
@@ -70,8 +76,41 @@ init : Page2Model
 init =
   { pageForm = Form.initial initialFields validate
   , modalForm = Form.initial initialFields validate
-  , pageThing = Nothing 
-  , modalThing = Nothing
-  , things = initialThings
+  , pageEntity = Nothing 
+  , modalEntity = Nothing
+  , entities = initialThings
+  , resetFunc = editReset
+  , fieldsFunc = formFieldsFunc
   }
 
+setFormFields : Thing -> List ( String, Field.Field )
+setFormFields thing =
+  [ ( "id", Field.Text ( toString thing.id ) )
+  , ( "name", Field.Text thing.name )
+  , ( "user", Field.Text ( toString thing.userId ) )
+  ]
+
+formFieldsFunc : FormFields Thing CustomError
+formFieldsFunc address form =
+  div
+    [ class "form-horizontal" ]
+    [ spanGroup "Id" address
+      (Form.getFieldAsString "id" form)
+      
+    , textGroup "Name" address
+      (Form.getFieldAsString "name" form)
+
+    , textGroup "User" address
+      (Form.getFieldAsString "userId" form)
+    --, selectGroup roleOptions "Role" formAddress
+      --(Form.getFieldAsString "profile.role" form)
+
+    ]
+
+editReset : EditReset Thing
+editReset maybeThing = 
+  case maybeThing of 
+    Just thing ->
+      setFormFields thing
+    Nothing ->
+      initialFields
