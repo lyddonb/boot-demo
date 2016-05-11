@@ -14,6 +14,10 @@ import Page2.Actions exposing (..)
 import Page2.Models exposing (Page2Model)
 import Page2.Update exposing (update)
 
+import Thing.Actions exposing (..)
+import Thing.Models exposing (ThingModel)
+import Thing.Update exposing (update)
+
 
 update : Actions.Action -> AppModel -> ( AppModel, Effects Actions.Action )
 update action model =
@@ -46,3 +50,10 @@ update action model =
           Page2.Update.update subAction model.pages.page2
       in
         ( set (pages => page2) pageModel model, Effects.map Page2Action fx )
+        
+    ThingAction subAction ->
+      let
+        ( pageModel, fx ) =
+          Thing.Update.update subAction model.pages.thing
+      in
+        ( set (pages => thing) pageModel model, Effects.map ThingAction fx )

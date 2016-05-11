@@ -16,6 +16,9 @@ getMenuDisplay page =
     Page2 ->
       text "Page 2"
 
+    ThingPage ->
+      text "Thing"
+
 iconBar : Signal.Address Action -> AppModel -> Html.Html
 iconBar address model =
   span
@@ -89,6 +92,7 @@ links address model =
       [ class "nav navbar-nav" ]
       [ link address model Page1
       , link address model Page2
+      , link address model ThingPage
       ]
     ]
 

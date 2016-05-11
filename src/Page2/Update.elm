@@ -15,6 +15,12 @@ import Layout.Actions exposing (..)
 import Page2.Actions exposing (..)
 import Page2.Models exposing (..)
 
+--type alias UpdateModel =
+  --{ players : List Player
+  --, showErrorAddress : Signal.Address String
+  --, deleteConfirmationAddress : Signal.Address ( PlayerId, String )
+  --}
+
 update : Page2Action -> Page2Model -> ( Page2Model, Effects Page2Action )
 update action model =
   case action of
