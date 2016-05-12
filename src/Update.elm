@@ -53,7 +53,13 @@ update action model =
         
     ThingAction subAction ->
       let
+        tModel = model.pages.thing
+
         ( pageModel, fx ) =
-          Thing.Update.update subAction model.pages.thing
+          Thing.Update.update subAction ({ tModel | things = model.entities.things })
+
+        updatedModel = model
+                        |> set (pages => thing) pageModel
+                        |> set (entities => things) pageModel.things
       in
-        ( set (pages => thing) pageModel model, Effects.map ThingAction fx )
+        ( updatedModel, Effects.map ThingAction fx )

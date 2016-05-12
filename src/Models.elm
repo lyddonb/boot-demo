@@ -8,7 +8,7 @@ import Identifier exposing (ID)
 
 import Page1.Models exposing (Page1Model, init, User, initialUsers)
 import Page2.Models exposing (Page2Model, init)
-import Thing.Models exposing (ThingModel, init)
+import Thing.Models exposing (ThingModel, init, Thing, initialThings)
 
 type Page
   = Page1
@@ -23,7 +23,9 @@ type alias Pages =
   }
 
 type alias Entities =
-  { users : Dict ID Page1.Models.User }
+  { users : Dict ID Page1.Models.User
+  , things : Dict ID Thing.Models.Thing
+  }
 
 type alias AppModel =
   { pages : Pages
@@ -42,7 +44,9 @@ initialPages =
 
 initialEntities : Entities
 initialEntities =
-  { users = initialUsers }
+  { users = initialUsers
+  , things = initialThings
+  }
 
 initialModel : AppModel
 initialModel =
@@ -70,3 +74,6 @@ entities = create .entities (\f r -> { r | entities = f r.entities })
 
 users : Focus { r | users:a } a
 users = create .users (\f r -> { r | users = f r.users })
+
+things : Focus { r | things:a } a
+things = create .things (\f r -> { r | things = f r.things })
