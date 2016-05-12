@@ -59,33 +59,45 @@ entityTable address model =
     []
     [ tr
       []
-      (List.map (\n -> fst n |> tableHeader) model.listFields)
-      --[ th [] [ text "Id" ]
-      --, th [] [ text "Name" ]
-      --, th [] [ text "User" ]
-      --, th [] [ text "Actions" ]
-      --]
+      (tableHeaders address model)
     ]
     , Dict.values model.entities
       |> List.reverse
-      |> List.map (entityRow address model)
+      |> List.map (tableRow address model)
       |> tbody []
   ]
 
-entityRow : Signal.Address (Action a) -> Model a e -> a -> Html.Html
-entityRow address model entity =
+tableHeaders : Signal.Address (Action a) -> Model a e -> List Html.Html
+tableHeaders address model =
+  List.append (List.map (\n -> fst n |> tableHeader) model.listFields) [ th [] [ text "Actions" ] ]
+
+tableRow : Signal.Address (Action a) -> Model a e -> a -> Html.Html
+tableRow address model entity =
   tr
     []
-    (List.map (\n -> snd n |> tableCell entity) model.listFields)
-    --[ td [] [ text (toString thing.id) ]
-    --, td [] [ text thing.name ]
-    --, td [] [ text (toString thing.userId) ]
-    --, td 
-        --[] 
-        --[ --editBtn address thing
-        ----, deleteBtn address thing
-        --]
-    --]
+    (List.append (List.map (\n -> snd n |> tableCell entity) model.listFields) [ td [] [ editBtn address entity
+   , deleteBtn address entity 
+   ] 
+   ])
+
+editBtn : Signal.Address (Action a) -> a -> Html.Html
+editBtn address model =
+  button
+    [ class "btn btn-primary btn-xs" 
+    , type' "button"
+    , attribute "data-toggle" "modal"
+    , attribute "data-target" "#editModal"
+    , onClick address (EditEntity model)
+    ]
+    [ i [class "fa fa-pencil mr1" ] [], text "Edit" ]
+
+deleteBtn : Signal.Address (Action a) -> a -> Html.Html
+deleteBtn address model =
+  button
+    [ class "btn btn-danger btn-xs" 
+    , onClick address (DeleteEntity model) 
+    ]
+    [ i [class "fa fa-trash mr1" ] [], text "Delete" ]
 
 tableCell : a -> ListField a -> Html
 tableCell entity fieldF =

@@ -21,3 +21,9 @@ update action model =
         , pageForm = Form.initial model.initialFields model.validation
         }
       , Effects.none)
+
+    EditEntity entity ->
+      ( model, Effects.none )
+
+    DeleteEntity entity ->
+      ( model, Effects.none )
