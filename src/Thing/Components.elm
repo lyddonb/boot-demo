@@ -25,3 +25,35 @@ fieldsCompoment address form =
       --(Form.getFieldAsString "profile.role" form)
 
     ]
+
+--thingTable : Signal.Address ThingAction -> ThingModel -> List Html.Html
+--thingTable address model =
+  --[ thead
+    --[]
+    --[ tr
+      --[]
+      --[ th [] [ text "Id" ]
+      --, th [] [ text "Name" ]
+      --, th [] [ text "User" ]
+      --, th [] [ text "Actions" ]
+      --]
+    --]
+    --, Dict.values model.entities
+      --|> List.reverse
+      --|> List.map (thingRow address model)
+      --|> tbody []
+  --]
+
+--thingRow : Signal.Address ThingAction -> ThingModel -> Thing -> Html.Html
+--thingRow address model thing =
+  --tr
+    --[]
+    --[ td [] [ text (toString thing.id) ]
+    --, td [] [ text thing.name ]
+    --, td [] [ text (toString thing.userId) ]
+    --, td 
+        --[] 
+        --[ editBtn address thing
+        --, deleteBtn address thing
+        --]
+    --]

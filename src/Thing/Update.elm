@@ -32,9 +32,10 @@ update action model =
 
         ( updatedModel, fx ) =
           updateForm pageAction model
+
+        updatedPageModel = { pageModel | entities = updatedModel.things }
       in
-        ( { model | page = pageModel }
-        , fx )
+        ( { model | page = updatedPageModel }, fx )
         --, Effects.map PageAction fx )
 
 
@@ -45,16 +46,15 @@ updateForm action model =
     SubmitPageEntity thing ->
       let
         -- HACK: Until we persist we need to get a new ID
-        newId = (Dict.keys model.things
+        newId = (Dict.keys model.page.entities
                   |> last
                   |> withDefault 0) + 1
 
-        updatedCollection = Dict.insert (newId) {thing | id = newId} model.things
-        _ = Debug.log "Collection: " updatedCollection
+        updatedCollection = Dict.insert (newId) {thing | id = newId} model.page.entities
       in
         ( { model | things = updatedCollection 
           }
         , Effects.none)
 
     _ ->
-      ( model, Effects.none )
+      ( { model | things = model.page.entities }, Effects.none )

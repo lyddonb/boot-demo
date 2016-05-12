@@ -4,6 +4,8 @@ import Dict exposing (Dict)
 
 import String
 
+import Html exposing (..)
+
 import Form exposing (Form)
 import Form.Error as Error exposing (Error(InvalidInt))
 import Form.Field as Field
@@ -12,7 +14,7 @@ import Form.Validate as Validate exposing (..)
 
 import Identifier exposing (ID, idValidator)
 
-import Page.Models exposing (Model, FieldsComponent, init)
+import Page.Models exposing (Model, FieldsComponent, init, ListFields)
 
 import Thing.Components exposing (..)
 
@@ -62,6 +64,13 @@ initialFields = []
 initialThings : Dict ID Thing
 initialThings = Dict.empty
 
+listFields : ListFields Thing
+listFields =
+  [ ("Id", \n -> .id n |> toString |> text )
+  , ("Name", \n -> .name n |> text )
+  , ("User", \n -> .userId n |> toString |> text )
+  ]
+
 type alias ThingModel =
   { page : Page.Models.Model Thing CustomError
   , things : Dict ID Thing
@@ -69,6 +78,6 @@ type alias ThingModel =
 
 init : ThingModel
 init =
-  { page = Page.Models.init "Thing Page" initialFields validate fieldsCompoment
+  { page = Page.Models.init "Thing Page" initialThings listFields initialFields validate fieldsCompoment
   , things = initialThings
   }
