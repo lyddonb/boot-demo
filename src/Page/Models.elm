@@ -20,20 +20,26 @@ type alias Model a e =
   { title : String 
   , pageForm : Form e a
   , pageFormEntity : Maybe a
+  , modalForm : Form e a
+  , modalFormEntity : Maybe a
   , fields : FieldsComponent a e
   , initialFields : List ( String, Field.Field )
+  , setFormFields : a -> List ( String, Field.Field )
   , validation : Validation e a
   , listFields : ListFields a
   , entities : Dict ID a
   }
 
-init : String -> Dict ID a -> ListFields a -> List ( String, Field.Field ) -> Validation e a -> FieldsComponent a e -> Model a e
-init title entities listFields initialFields validation fields =
+init : String -> Dict ID a -> ListFields a -> List ( String, Field.Field ) -> (a -> List ( String, Field.Field )) -> Validation e a -> FieldsComponent a e -> Model a e
+init title entities listFields initialFields setFormFields validation fields =
   { title = title 
   , pageForm = Form.initial initialFields validation
   , pageFormEntity = Nothing
+  , modalForm = Form.initial initialFields validation
+  , modalFormEntity = Nothing
   , fields = fields
   , initialFields = initialFields
+  , setFormFields = setFormFields
   , validation = validation
   , listFields = listFields
   , entities = entities

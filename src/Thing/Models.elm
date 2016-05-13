@@ -71,6 +71,13 @@ listFields =
   , ("User", \n -> .userId n |> toString |> text )
   ]
 
+setFormFields : Thing -> List ( String, Field.Field )
+setFormFields thing =
+  [ ( "id", Field.Text ( toString thing.id ) )
+  , ( "name", Field.Text thing.name )
+  , ( "userId", Field.Text ( toString thing.userId ) )
+  ]
+
 type alias ThingModel =
   { page : Page.Models.Model Thing CustomError
   , things : Dict ID Thing
@@ -78,6 +85,6 @@ type alias ThingModel =
 
 init : ThingModel
 init =
-  { page = Page.Models.init "Thing Page" initialThings listFields initialFields validate fieldsCompoment
+  { page = Page.Models.init "Thing Page" initialThings listFields initialFields setFormFields validate fieldsCompoment 
   , things = initialThings
   }

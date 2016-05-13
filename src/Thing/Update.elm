@@ -12,7 +12,7 @@ import Form exposing (Form)
 
 import List.Extra exposing (last)
 
-import Page.Actions exposing (Action (SubmitPageEntity))
+import Page.Actions exposing (Action (SubmitPageEntity, SubmitModalEntity))
 import Page.Update exposing (..)
 
 import Thing.Actions exposing (..)
@@ -31,7 +31,7 @@ update action model =
           Page.Update.update pageAction model.page
 
         ( updatedModel, fx ) =
-          updateForm pageAction model
+          updateForm pageAction { model | things = model.page.entities }
 
         updatedPageModel = { pageModel | entities = updatedModel.things }
       in
@@ -46,15 +46,22 @@ updateForm action model =
     SubmitPageEntity thing ->
       let
         -- HACK: Until we persist we need to get a new ID
-        newId = (Dict.keys model.page.entities
+        newId = (Dict.keys model.things
                   |> last
                   |> withDefault 0) + 1
 
-        updatedCollection = Dict.insert (newId) {thing | id = newId} model.page.entities
+        updatedCollection = Dict.insert (newId) {thing | id = newId} model.things
       in
         ( { model | things = updatedCollection 
           }
         , Effects.none)
 
+    SubmitModalEntity thing ->
+      let
+        updatedCollection = Dict.insert (thing.id) thing model.things
+      in
+        ( { model | things = updatedCollection }
+        , Effects.none)
+
     _ ->
-      ( { model | things = model.page.entities }, Effects.none )
+      ( model, Effects.none )

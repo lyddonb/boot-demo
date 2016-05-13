@@ -20,7 +20,6 @@ page address model =
     [ class "container" ] 
     [ panel pageForm address model
     , panel listView address model
-    --, panel address model (listView thingTable) "View Things"
     ]
 
 panel : Component a e -> Signal.Address (Action a) -> Model a e -> Html
@@ -45,9 +44,8 @@ listView address model =
     []
     [ div
       []
-      [ -- modal address model
-      --, table
-        table
+      [ modal address model
+      , table
         [ class "table table-striped table-hover table-condensed" ]
         (entityTable address model)
       ]
@@ -107,6 +105,62 @@ tableHeader : String -> Html
 tableHeader label =
   th [] [ text label ]
 
+modal : Signal.Address (Action a) -> Model a e -> Html
+modal address model =
+  div
+    [ class "modal fade"
+    , id "editModal"
+    , attribute "tabindex" "-1"
+    , attribute "role" "dialog"
+    , attribute "aria-labelledby" "editModalLabel"
+    , attribute "tabindex" "-1"
+    ]
+    [ div
+      [ class "modal-dialog" 
+      , attribute "role" "document" 
+      ]
+      [ div
+        [ class "modal-content" ]
+        (modalForm address model)
+      ]
+    ]
+
+modalForm : Signal.Address (Action a) -> Model a e -> List Html
+modalForm address model =
+  let
+    formAddress = (Signal.forwardTo address ModalFormAction)
+  in
+    [ div
+      [ class "modal-header" ]
+      [ button
+        [ class "close"
+        , attribute "data-dismiss" "modal"
+        , attribute "aria-label" "Close"
+        ]
+        [ span
+          [ attribute "aria-hidden" "true" ]
+          --[ text "&times;" ]
+          [ text "×" ]
+        ]
+      , h4
+        [ class "modal-title"
+        , id "userEditModalLabel"
+        ]
+        [ text "Edit ..TODO..." ]
+      ]
+    , div
+      [ class "modal-body" ]
+      [ p
+        []
+        [ model.fields formAddress model.modalForm 
+        ]
+      ]
+    , div
+      [ class "modal-footer" ]
+      [ modalFormHandler address model 
+      ]
+    ]
+
 pageForm : Component a e
 pageForm address model =
   let
@@ -116,7 +170,6 @@ pageForm address model =
       []
       [ model.fields formAddress model.pageForm 
       , formHandler address model
-      --, formHandler resetFields formAddress (submitClick formAddress address model.pageForm SubmitPageEntity)
       ]
 
 formHandler : Signal.Address (Action a) -> Model a e -> Html
@@ -145,3 +198,49 @@ formHandler address {pageForm, pageFormEntity, initialFields} =
       ]
       [ text "Reset" ]
     ]
+
+modalFormHandler : Signal.Address (Action a) -> Model a e -> Html
+modalFormHandler address model =
+  let
+    resetFunc = 
+    case model.modalFormEntity of
+      Just entity ->
+        model.setFormFields entity
+    
+      Nothing ->
+        model.initialFields
+
+    formAddress = (Signal.forwardTo address ModalFormAction)
+
+    submitClick =
+    case Form.getOutput model.modalForm of
+      Just modalFormEntity ->
+        onClick address (SubmitModalEntity modalFormEntity)
+
+      Nothing ->
+        onClick formAddress Form.Submit
+  in
+    div
+      []
+      [
+        formActions
+        [ button
+          [ submitClick
+          , class "btn btn-primary"
+          , attribute "data-dismiss" "modal"
+          ]
+          [ text "Submit" ]
+        --, text " "
+        , button
+          [ onClick formAddress (Form.Reset resetFunc)
+          , class "btn btn-default"
+          ]
+          [ text "Reset" ]
+        , button
+          [ class "btn btn-default"
+          , type' "button"
+          , attribute "data-dismiss" "modal"
+          ]
+          [ text "Close" ]
+        ]
+      ]
