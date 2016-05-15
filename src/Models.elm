@@ -8,7 +8,9 @@ import Identifier exposing (ID)
 
 import Page1.Models exposing (Page1Model, init, User, initialUsers)
 import Page2.Models exposing (Page2Model, init)
-import Thing.Models exposing (ThingModel, init, Thing, initialThings)
+import Thing.Models exposing (ThingModel, init)
+
+import Entities exposing (Entities, Thing, initialEntities)
 
 type Page
   = Page1
@@ -20,11 +22,6 @@ type alias Pages =
   , page2 : Page2.Models.Page2Model
   , thing : Thing.Models.ThingModel
   , currentPage : Page
-  }
-
-type alias Entities =
-  { users : Dict ID Page1.Models.User
-  , things : Dict ID Thing.Models.Thing
   }
 
 type alias AppModel =
@@ -41,12 +38,6 @@ initialPages =
   }
 
 -- TODO: Add things to the entities
-
-initialEntities : Entities
-initialEntities =
-  { users = initialUsers
-  , things = initialThings
-  }
 
 initialModel : AppModel
 initialModel =
@@ -68,12 +59,3 @@ thing = create .thing (\f r -> { r | thing = f r.thing })
 
 currentPage : Focus { r | currentPage:a } a
 currentPage = create .currentPage (\f r -> { r | currentPage = f r.currentPage })
-
-entities : Focus { r | entities:a } a
-entities = create .entities (\f r -> { r | entities = f r.entities })
-
-users : Focus { r | users:a } a
-users = create .users (\f r -> { r | users = f r.users })
-
-things : Focus { r | things:a } a
-things = create .things (\f r -> { r | things = f r.things })

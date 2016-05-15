@@ -18,19 +18,19 @@ page : Signal.Address (Action a) -> Model a e -> Html
 page address model =
   div 
     [ class "container" ] 
-    [ panel pageForm address model
-    , panel listView address model
+    [ panel ("Add a " ++ model.title.single) pageForm address model
+    , panel ("View " ++ model.title.plural) listView address model
     ]
 
-panel : Component a e -> Signal.Address (Action a) -> Model a e -> Html
-panel component address model =
+panel : String -> Component a e -> Signal.Address (Action a) -> Model a e -> Html
+panel title component address model =
   div
     [ class "panel panel-default" ]
     [ div
       [ class "panel-heading" ]
       [ div
         [ class "panel-title" ]
-        [ text model.title ]
+        [ text title ]
       ]
     , div
       [ class "panel-body" ]
@@ -59,7 +59,8 @@ entityTable address model =
       []
       (tableHeaders address model)
     ]
-    , Dict.values model.entities
+    , model.entityAccessor model.entities
+      |> Dict.values
       |> List.reverse
       |> List.map (tableRow address model)
       |> tbody []
@@ -152,7 +153,7 @@ modalForm address model =
       [ class "modal-body" ]
       [ p
         []
-        [ model.fields formAddress model.modalForm 
+        [ model.fields formAddress model.entities model.modalForm 
         ]
       ]
     , div
@@ -168,7 +169,7 @@ pageForm address model =
   in
     div
       []
-      [ model.fields formAddress model.pageForm 
+      [ model.fields formAddress model.entities model.pageForm 
       , formHandler address model
       ]
 

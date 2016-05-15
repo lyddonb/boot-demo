@@ -10,14 +10,30 @@ import Form.Validate as Validate exposing (Validation)
 
 import Identifier exposing (ID)
 
-type alias FieldsComponent a e = Signal.Address Form.Action -> Form e a -> Html
+import Entities exposing (Entities, initialEntities)
+
+type alias FieldsComponent a e = Signal.Address Form.Action -> Entities -> Form e a -> Html
 
 type alias ListField a = a -> Html
 
 type alias ListFields a = List ( String, ListField a )
 
+type alias Title = 
+  { single : String
+  , plural : String
+  }
+
+setTitle : String -> String -> Title
+setTitle x y =
+  { single = x
+  , plural = y
+  }
+
+initialFields : List ( String, Field.Field )
+initialFields = []
+
 type alias Model a e =
-  { title : String 
+  { title : Title 
   , pageForm : Form e a
   , pageFormEntity : Maybe a
   , modalForm : Form e a
@@ -27,11 +43,12 @@ type alias Model a e =
   , setFormFields : a -> List ( String, Field.Field )
   , validation : Validation e a
   , listFields : ListFields a
-  , entities : Dict ID a
+  , entities : Entities
+  , entityAccessor : Entities -> Dict ID a
   }
 
-init : String -> Dict ID a -> ListFields a -> List ( String, Field.Field ) -> (a -> List ( String, Field.Field )) -> Validation e a -> FieldsComponent a e -> Model a e
-init title entities listFields initialFields setFormFields validation fields =
+init : Title -> ListFields a -> (a -> List ( String, Field.Field )) -> Validation e a -> FieldsComponent a e -> (Entities -> Dict ID a) -> Model a e
+init title listFields setFormFields validation fields entityAccessor =
   { title = title 
   , pageForm = Form.initial initialFields validation
   , pageFormEntity = Nothing
@@ -42,5 +59,6 @@ init title entities listFields initialFields setFormFields validation fields =
   , setFormFields = setFormFields
   , validation = validation
   , listFields = listFields
-  , entities = entities
+  , entities = initialEntities
+  , entityAccessor = entityAccessor
   }

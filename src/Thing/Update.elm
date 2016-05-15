@@ -4,6 +4,8 @@ import Debug
 
 import Dict exposing (Dict)
 
+import Focus exposing (..)
+
 import Effects exposing (Effects)
 
 import Maybe exposing (withDefault)
@@ -14,6 +16,8 @@ import List.Extra exposing (last)
 
 import Page.Actions exposing (Action (SubmitPageEntity, SubmitModalEntity))
 import Page.Update exposing (..)
+
+import Entities exposing (..)
 
 import Thing.Actions exposing (..)
 import Thing.Models exposing (..)
@@ -28,14 +32,14 @@ update action model =
     PageAction pageAction ->
       let
         ( pageModel, _ ) =
-          Page.Update.update pageAction model.page
+          Page.Update.update pageAction model
 
         ( updatedModel, fx ) =
-          updateForm pageAction { model | things = model.page.entities }
+          updateForm pageAction pageModel
 
-        updatedPageModel = { pageModel | entities = updatedModel.things }
+        --updatedPageModel = { pageModel | entities = updatedModel.things }
       in
-        ( { model | page = updatedPageModel }, fx )
+        ( updatedModel, fx )
         --, Effects.map PageAction fx )
 
 
@@ -46,22 +50,25 @@ updateForm action model =
     SubmitPageEntity thing ->
       let
         -- HACK: Until we persist we need to get a new ID
-        newId = (Dict.keys model.things
+        newId = (Dict.keys model.entities.things
                   |> last
                   |> withDefault 0) + 1
 
-        updatedCollection = Dict.insert (newId) {thing | id = newId} model.things
+        updatedThings = Dict.insert (newId) {thing | id = newId} model.entities.things
+
+        updatedModel = model
+                        |> set (entities => things) updatedThings
       in
-        ( { model | things = updatedCollection 
-          }
-        , Effects.none)
+        ( updatedModel, Effects.none)
 
     SubmitModalEntity thing ->
       let
-        updatedCollection = Dict.insert (thing.id) thing model.things
+        updatedThings = Dict.insert (thing.id) thing model.entities.things
+
+        updatedModel = model
+                        |> set (entities => things) updatedThings
       in
-        ( { model | things = updatedCollection }
-        , Effects.none)
+        ( updatedModel, Effects.none)
 
     _ ->
       ( model, Effects.none )

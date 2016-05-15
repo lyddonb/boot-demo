@@ -2,7 +2,7 @@ module Thing.Actions (..) where
 
 import Page.Actions exposing (Action)
 
-import Thing.Models exposing (..)
+import Entities exposing (..)
 
 type ThingAction 
   = NoOp

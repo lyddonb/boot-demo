@@ -5,6 +5,8 @@ import Dict exposing (Dict)
 import String
 
 import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 import Form exposing (Form)
 import Form.Error as Error exposing (Error(InvalidInt))
@@ -14,15 +16,14 @@ import Form.Validate as Validate exposing (..)
 
 import Identifier exposing (ID, idValidator)
 
-import Page.Models exposing (Model, FieldsComponent, init, ListFields)
+import Entities exposing (Entities)
 
-import Thing.Components exposing (..)
+import Page.Bootstrap exposing (..)
+import Page.Models exposing (Model, FieldsComponent, init, ListFields, setTitle)
 
-type alias Thing =
-  { id : ID
-  , name : String
-  , userId : ID
-  }
+import Page1.Models exposing (User, initialUsers)
+
+import Entities exposing (Thing, initialThings)
 
 type CustomError
   = Ooops
@@ -58,12 +59,6 @@ validate =
     ("name" := string `andThen` nonEmpty)
     ("userId" := validateUserId)
 
-initialFields : List ( String, Field.Field )
-initialFields = []
-
-initialThings : Dict ID Thing
-initialThings = Dict.empty
-
 listFields : ListFields Thing
 listFields =
   [ ("Id", \n -> .id n |> toString |> text )
@@ -78,13 +73,27 @@ setFormFields thing =
   , ( "userId", Field.Text ( toString thing.userId ) )
   ]
 
-type alias ThingModel =
-  { page : Page.Models.Model Thing CustomError
-  , things : Dict ID Thing
-  }
+type alias ThingModel = Page.Models.Model Thing CustomError
+
+fieldsCompoment : Signal.Address Form.Action -> Entities -> Form e a -> Html
+fieldsCompoment address entities form =
+  let
+    userOptions =
+      ("0", "--") :: (Dict.foldl (\id val acc -> (toString id, val.name) :: acc) [] entities.users)
+  in
+    div
+      [ class "form-horizontal" ]
+      [ spanGroup "Id" address
+        (Form.getFieldAsString "id" form)
+        
+      , textGroup "Name" address
+        (Form.getFieldAsString "name" form)
+
+      , selectGroup userOptions "User" address
+        (Form.getFieldAsString "userId" form)
+
+      ]
 
 init : ThingModel
 init =
-  { page = Page.Models.init "Thing Page" initialThings listFields initialFields setFormFields validate fieldsCompoment 
-  , things = initialThings
-  }
+  Page.Models.init (setTitle "Thing" "Things") listFields setFormFields validate fieldsCompoment .things

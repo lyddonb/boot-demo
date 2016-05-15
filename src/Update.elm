@@ -6,6 +6,8 @@ import Effects exposing (Effects)
 import Actions exposing (..)
 import Models exposing (..)
 
+import Entities exposing (..)
+
 import Page1.Actions exposing (..)
 import Page1.Models exposing (Page1Model)
 import Page1.Update exposing (update)
@@ -56,10 +58,9 @@ update action model =
         tModel = model.pages.thing
 
         ( pageModel, fx ) =
-          Thing.Update.update subAction ({ tModel | things = model.entities.things })
+          Thing.Update.update subAction ({ tModel | entities = model.entities })
 
-        updatedModel = model
+        updatedModel = { model | entities = pageModel.entities }
                         |> set (pages => thing) pageModel
-                        |> set (entities => things) pageModel.things
       in
         ( updatedModel, Effects.map ThingAction fx )

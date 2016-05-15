@@ -15,53 +15,17 @@ import RouteHash exposing (HashUpdate)
 
 import Page.Bootstrap exposing (..)
 import Page.Components exposing (..)
+import Page.Models exposing (..)
+
+import Entities exposing (Thing)
 
 import Thing.Actions exposing (..)
 import Thing.Models exposing (..)
 import Thing.Update exposing (..)
 
-view : Signal.Address ThingAction -> ThingModel -> Html
+view : Signal.Address ThingAction -> Page.Models.Model Thing e -> Html
 view address model =
-  let
-    pageAddress = (Signal.forwardTo address PageAction)
-  in
-    div 
-      [ class "container" ] 
-      [ page pageAddress model.page
-      ]
-
-
---thingTable : Signal.Address ThingAction -> ThingModel -> List Html.Html
---thingTable address model =
-  --[ thead
-    --[]
-    --[ tr
-      --[]
-      --[ th [] [ text "Id" ]
-      --, th [] [ text "Name" ]
-      --, th [] [ text "User" ]
-      --, th [] [ text "Actions" ]
-      --]
-    --]
-    --, Dict.values model.entities
-      --|> List.reverse
-      --|> List.map (thingRow address model)
-      --|> tbody []
-  --]
-
---thingRow : Signal.Address ThingAction -> ThingModel -> Thing -> Html.Html
---thingRow address model thing =
-  --tr
-    --[]
-    --[ td [] [ text (toString thing.id) ]
-    --, td [] [ text thing.name ]
-    --, td [] [ text (toString thing.userId) ]
-    --, td 
-        --[] 
-        --[ editBtn address thing
-        --, deleteBtn address thing
-        --]
-    --]
+  page (Signal.forwardTo address PageAction) model
 
 
 delta2update : ThingModel -> ThingModel -> Maybe HashUpdate
