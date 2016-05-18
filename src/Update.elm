@@ -8,9 +8,9 @@ import Models exposing (..)
 
 import Entities exposing (..)
 
-import Page1.Actions exposing (..)
-import Page1.Models exposing (Page1Model)
-import Page1.Update exposing (update)
+import User.Actions exposing (..)
+import User.Models exposing (UserModel)
+import User.Update exposing (update)
 
 import Thing.Actions exposing (..)
 import Thing.Models exposing (ThingModel)
@@ -27,20 +27,19 @@ update action model =
     ShowPage page ->
       ( set (pages => currentPage) page model, Effects.none )
 
-    Page1Action subAction ->
+    UserAction subAction ->
       let
-        pModel = model.pages.page1
+        pModel = model.pages.user
 
-        -- Pass the users from the AppModel down to the Page1Model
+        -- Pass the users from the AppModel down to the UserModel
         ( pageModel, fx ) =
-          Page1.Update.update subAction ({ pModel | users = model.entities.users })
+          User.Update.update subAction ({ pModel | entities = model.entities })
 
-        -- Update page1 and users on the AppModel
-        updatedModel = model
-                        |> set (pages => page1) pageModel
-                        |> set (entities => users) pageModel.users
+        -- Update user and users on the AppModel
+        updatedModel = { model | entities = pageModel.entities }
+                        |> set (pages => user) pageModel
       in
-        ( updatedModel, Effects.map Page1Action fx )
+        ( updatedModel, Effects.map UserAction fx )
         
     ThingAction subAction ->
       let

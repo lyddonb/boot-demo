@@ -18,7 +18,7 @@ import Models exposing (..)
 import Update exposing (..)
 import View exposing (..)
 
-import Page1.Page exposing (delta2update, location2action)
+import User.Page exposing (delta2update, location2action)
 import Thing.Page exposing (delta2update, location2action)
 
 
@@ -63,11 +63,11 @@ main =
 delta2update : AppModel -> AppModel -> Maybe HashUpdate
 delta2update previous current =
   case (Debug.log "Current Page: " current.pages.currentPage) of
-    Page1 ->
+    User ->
       -- First, we ask the submodule for a HashUpdate. Then, we use
       -- `map` to prepend something to the URL.
       RouteHash.map ((::) "page-1") <|
-        Page1.Page.delta2update previous.pages.page1 current.pages.page1
+        User.Page.delta2update previous.pages.user current.pages.user
 
     ThingPage ->
       RouteHash.map ((::) "thing") <|
@@ -76,20 +76,20 @@ delta2update previous current =
 location2action : List String -> List Action
 location2action list =
   case (Debug.log "Page Location: " list) of
-    "page-1" :: rest ->
-      -- We give the Page1 module a chance to interpret the rest of
+    "user" :: rest ->
+      -- We give the User module a chance to interpret the rest of
       -- the URL, and then we prepend an action for the part we
       -- interpreted.
-      ( ShowPage Page1 ) :: List.map Page1Action ( 
-        Page1.Page.location2action rest )
+      ( ShowPage User ) :: List.map UserAction ( 
+        User.Page.location2action rest )
     
     "thing" :: rest ->
       ( ShowPage ThingPage ) :: List.map ThingAction ( 
         Thing.Page.location2action rest )
 
     _ ->
-      ( ShowPage Page1 ) :: List.map Page1Action ( 
-        Page1.Page.location2action [] )
+      ( ShowPage User ) :: List.map UserAction ( 
+        User.Page.location2action [] )
 
 port routeTasks : Signal (Task () ())
 port routeTasks =

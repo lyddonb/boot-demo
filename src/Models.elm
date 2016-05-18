@@ -6,17 +6,17 @@ import Focus exposing (..)
 
 import Identifier exposing (ID)
 
-import Page1.Models exposing (Page1Model, init, User, initialUsers)
+import User.Models exposing (UserModel, init)
 import Thing.Models exposing (ThingModel, init)
 
-import Entities exposing (Entities, Thing, initialEntities)
+import Entities exposing (Entities, Thing, initialEntities, User, initialUsers)
 
 type Page
-  = Page1
+  = User
   | ThingPage
 
 type alias Pages = 
-  { page1 : Page1.Models.Page1Model
+  { user : User.Models.UserModel
   , thing : Thing.Models.ThingModel
   , currentPage : Page
   }
@@ -28,9 +28,9 @@ type alias AppModel =
 
 initialPages : Pages
 initialPages =
-  { page1 = Page1.Models.init
+  { user = User.Models.init
   , thing = Thing.Models.init
-  , currentPage = Page1
+  , currentPage = User
   }
 
 -- TODO: Add things to the entities
@@ -44,8 +44,8 @@ initialModel =
 pages : Focus { r | pages:a } a
 pages = create .pages (\f r -> { r | pages = f r.pages })
 
-page1 : Focus { r | page1:a } a
-page1 = create .page1 (\f r -> { r | page1 = f r.page1 })
+user : Focus { r | user:a } a
+user = create .user (\f r -> { r | user = f r.user })
 
 thing : Focus { r | thing:a } a
 thing = create .thing (\f r -> { r | thing = f r.thing })

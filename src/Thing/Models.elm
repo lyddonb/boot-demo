@@ -21,9 +21,7 @@ import Entities exposing (Entities)
 import Bootstrap exposing (..)
 import Cruddy.Models exposing (Model, FieldsComponent, init, ListFields, setTitle)
 
-import Page1.Models exposing (User, initialUsers)
-
-import Entities exposing (Thing, initialThings)
+import Entities exposing (Thing, initialThings, User, initialUsers)
 
 type CustomError
   = Ooops

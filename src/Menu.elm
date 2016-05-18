@@ -10,8 +10,8 @@ import Models exposing (..)
 getMenuDisplay : Page -> Html.Html
 getMenuDisplay page =
   case page of
-    Page1 ->
-      text "Page 1"
+    User ->
+      text "User"
 
     ThingPage ->
       text "Thing"
@@ -87,7 +87,7 @@ links address model =
     ]
     [ ul
       [ class "nav navbar-nav" ]
-      [ link address model Page1
+      [ link address model User
       , link address model ThingPage
       ]
     ]
