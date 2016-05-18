@@ -14,8 +14,8 @@ import Form exposing (Form)
 
 import List.Extra exposing (last)
 
-import Page.Actions exposing (Action (SubmitPageEntity, SubmitModalEntity))
-import Page.Update exposing (..)
+import Cruddy.Actions exposing (Action (SubmitPageEntity, SubmitModalEntity))
+import Cruddy.Update exposing (..)
 
 import Entities exposing (..)
 
@@ -32,7 +32,7 @@ update action model =
     PageAction pageAction ->
       let
         ( pageModel, _ ) =
-          Page.Update.update pageAction model
+          Cruddy.Update.update pageAction model
 
         ( updatedModel, fx ) =
           updateForm pageAction pageModel
@@ -43,7 +43,7 @@ update action model =
         --, Effects.map PageAction fx )
 
 
-updateForm : Page.Actions.Action Thing -> ThingModel -> ( ThingModel, Effects ThingAction )
+updateForm : Cruddy.Actions.Action Thing -> ThingModel -> ( ThingModel, Effects ThingAction )
 updateForm action model =
   case action of
 

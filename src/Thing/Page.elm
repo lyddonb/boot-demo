@@ -13,9 +13,9 @@ import Form.Field as Field
 
 import RouteHash exposing (HashUpdate)
 
-import Page.Bootstrap exposing (..)
-import Page.Components exposing (..)
-import Page.Models exposing (..)
+import Cruddy.Bootstrap exposing (..)
+import Cruddy.Components exposing (..)
+import Cruddy.Models exposing (..)
 
 import Entities exposing (Thing)
 
@@ -23,7 +23,7 @@ import Thing.Actions exposing (..)
 import Thing.Models exposing (..)
 import Thing.Update exposing (..)
 
-view : Signal.Address ThingAction -> Page.Models.Model Thing e -> Html
+view : Signal.Address ThingAction -> Cruddy.Models.Model Thing e -> Html
 view address model =
   page (Signal.forwardTo address PageAction) model
 

@@ -18,8 +18,8 @@ import Identifier exposing (ID, idValidator)
 
 import Entities exposing (Entities)
 
-import Page.Bootstrap exposing (..)
-import Page.Models exposing (Model, FieldsComponent, init, ListFields, setTitle)
+import Cruddy.Bootstrap exposing (..)
+import Cruddy.Models exposing (Model, FieldsComponent, init, ListFields, setTitle)
 
 import Page1.Models exposing (User, initialUsers)
 
@@ -73,7 +73,7 @@ setFormFields thing =
   , ( "userId", Field.Text ( toString thing.userId ) )
   ]
 
-type alias ThingModel = Page.Models.Model Thing CustomError
+type alias ThingModel = Cruddy.Models.Model Thing CustomError
 
 fieldsCompoment : Signal.Address Form.Action -> Entities -> Form e a -> Html
 fieldsCompoment address entities form =
@@ -96,4 +96,4 @@ fieldsCompoment address entities form =
 
 init : ThingModel
 init =
-  Page.Models.init (setTitle "Thing" "Things") listFields setFormFields validate fieldsCompoment .things
+  Cruddy.Models.init (setTitle "Thing" "Things") listFields setFormFields validate fieldsCompoment .things
