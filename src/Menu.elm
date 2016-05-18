@@ -1,4 +1,4 @@
-module Menu.Menu (..) where
+module Menu (..) where
 
 import Html exposing (..)
 import Html.Attributes exposing (..)

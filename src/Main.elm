@@ -13,7 +13,7 @@ import StartApp
 import RouteHash exposing (HashUpdate)
 
 import Actions exposing (..)
-import Menu.Menu exposing (menu)
+import Menu exposing (menu)
 import Models exposing (..)
 import Update exposing (..)
 import View exposing (..)

@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 
 import Actions exposing (..)
-import Menu.Menu exposing (menu)
+import Menu exposing (menu)
 import Models exposing (..)
 
 import Page1.Page exposing (..)
@@ -27,5 +27,5 @@ view address model =
       [ class "container" ]
       [ div
         [ class "row" ]
-        [ Menu.Menu.menu address model ]
+        [ Menu.menu address model ]
       , mainView ]
