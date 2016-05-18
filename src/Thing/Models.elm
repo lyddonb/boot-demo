@@ -18,7 +18,7 @@ import Identifier exposing (ID, idValidator)
 
 import Entities exposing (Entities)
 
-import Cruddy.Bootstrap exposing (..)
+import Bootstrap exposing (..)
 import Cruddy.Models exposing (Model, FieldsComponent, init, ListFields, setTitle)
 
 import Page1.Models exposing (User, initialUsers)

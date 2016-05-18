@@ -13,7 +13,7 @@ import Form.Field as Field
 
 import RouteHash exposing (HashUpdate)
 
-import Cruddy.Bootstrap exposing (..)
+import Bootstrap exposing (..)
 import Cruddy.Components exposing (..)
 import Cruddy.Models exposing (..)
 
