@@ -13,9 +13,6 @@ getMenuDisplay page =
     Page1 ->
       text "Page 1"
 
-    Page2 ->
-      text "Page 2"
-
     ThingPage ->
       text "Thing"
 
@@ -91,7 +88,6 @@ links address model =
     [ ul
       [ class "nav navbar-nav" ]
       [ link address model Page1
-      , link address model Page2
       , link address model ThingPage
       ]
     ]

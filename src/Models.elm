@@ -7,19 +7,16 @@ import Focus exposing (..)
 import Identifier exposing (ID)
 
 import Page1.Models exposing (Page1Model, init, User, initialUsers)
-import Page2.Models exposing (Page2Model, init)
 import Thing.Models exposing (ThingModel, init)
 
 import Entities exposing (Entities, Thing, initialEntities)
 
 type Page
   = Page1
-  | Page2
   | ThingPage
 
 type alias Pages = 
   { page1 : Page1.Models.Page1Model
-  , page2 : Page2.Models.Page2Model
   , thing : Thing.Models.ThingModel
   , currentPage : Page
   }
@@ -32,7 +29,6 @@ type alias AppModel =
 initialPages : Pages
 initialPages =
   { page1 = Page1.Models.init
-  , page2 = Page2.Models.init
   , thing = Thing.Models.init
   , currentPage = Page1
   }
@@ -50,9 +46,6 @@ pages = create .pages (\f r -> { r | pages = f r.pages })
 
 page1 : Focus { r | page1:a } a
 page1 = create .page1 (\f r -> { r | page1 = f r.page1 })
-
-page2 : Focus { r | page2:a } a
-page2 = create .page2 (\f r -> { r | page2 = f r.page2 })
 
 thing : Focus { r | thing:a } a
 thing = create .thing (\f r -> { r | thing = f r.thing })

@@ -12,10 +12,6 @@ import Page1.Actions exposing (..)
 import Page1.Models exposing (Page1Model)
 import Page1.Update exposing (update)
 
-import Page2.Actions exposing (..)
-import Page2.Models exposing (Page2Model)
-import Page2.Update exposing (update)
-
 import Thing.Actions exposing (..)
 import Thing.Models exposing (ThingModel)
 import Thing.Update exposing (update)
@@ -45,13 +41,6 @@ update action model =
                         |> set (entities => users) pageModel.users
       in
         ( updatedModel, Effects.map Page1Action fx )
-        
-    Page2Action subAction ->
-      let
-        ( pageModel, fx ) =
-          Page2.Update.update subAction model.pages.page2
-      in
-        ( set (pages => page2) pageModel model, Effects.map Page2Action fx )
         
     ThingAction subAction ->
       let

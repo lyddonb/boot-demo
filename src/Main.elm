@@ -19,7 +19,6 @@ import Update exposing (..)
 import View exposing (..)
 
 import Page1.Page exposing (delta2update, location2action)
-import Page2.Page exposing (delta2update, location2action)
 import Thing.Page exposing (delta2update, location2action)
 
 
@@ -70,10 +69,6 @@ delta2update previous current =
       RouteHash.map ((::) "page-1") <|
         Page1.Page.delta2update previous.pages.page1 current.pages.page1
 
-    Page2 ->
-      RouteHash.map ((::) "page-2") <|
-        Page2.Page.delta2update previous.pages.page2 current.pages.page2
-
     ThingPage ->
       RouteHash.map ((::) "thing") <|
         Thing.Page.delta2update previous.pages.thing current.pages.thing
@@ -88,10 +83,6 @@ location2action list =
       ( ShowPage Page1 ) :: List.map Page1Action ( 
         Page1.Page.location2action rest )
     
-    "page-2" :: rest ->
-      ( ShowPage Page2 ) :: List.map Page2Action ( 
-        Page2.Page.location2action rest )
-
     "thing" :: rest ->
       ( ShowPage ThingPage ) :: List.map ThingAction ( 
         Thing.Page.location2action rest )
