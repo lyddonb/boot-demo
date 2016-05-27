@@ -19,5 +19,8 @@
     "webpack": "^1.13.0",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "elm-webpack-loader": "^3.0.3"
   }
 }

@@ -1,31 +1,17 @@
-module View (..) where
-
-import Signal exposing (forwardTo)
+module View exposing (..) 
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
-import Actions exposing (..)
-import Menu exposing (menu)
+import Messages exposing (..)
 import Models exposing (..)
 
-import User.Page exposing (..)
-import Thing.Page exposing (..)
 
-view : Signal.Address Action -> AppModel -> Html.Html
-view address model =
-  let
-    mainView =
-      case model.pages.currentPage of
-        User ->
-          User.Page.view (forwardTo address UserAction) model.pages.user
-
-        ThingPage ->
-          Thing.Page.view (forwardTo address ThingAction) model.pages.thing
- in
-    div
-      [ class "container" ]
-      [ div
-        [ class "row" ]
-        [ Menu.menu address model ]
-      , mainView ]
+view : Model -> Html Msg
+view model =
+  div
+    [ class "container" ]
+    [ div
+      [ class "row" ]
+      [ text "Hi" ]
+    ]
