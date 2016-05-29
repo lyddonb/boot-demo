@@ -1,9 +1,10 @@
 module Users.Messages exposing (..)
 
-import Cruddy.Messages as CruddyMessages
+import Form exposing (Form)
 
 import Entities exposing (User)
 
 type Msg
   = NoOp
-  | PageMsg (CruddyMessages.Msg User)
+  | FormMsg Form.Msg
+  | SubmitUser User

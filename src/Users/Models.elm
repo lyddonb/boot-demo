@@ -14,8 +14,8 @@ import Form.Validate as Validate exposing (..)
 
 import Bootstrap exposing (..)
 
-import Cruddy.Messages exposing (Msg(PageFormMsg))
-import Cruddy.Models as CruddyModels
+--import Cruddy.Messages exposing (Msg(PageFormMsg))
+--import Cruddy.Models as CruddyModels
 
 import Entities exposing (..)
 
@@ -23,9 +23,7 @@ import FormInfix exposing ((:=), (|:))
 
 import Identifier exposing (ID, idValidator)
 
-import Users.Messages exposing (Msg(PageMsg))
-
-type alias Model = CruddyModels.Model User CustomError 
+import Users.Messages exposing (Msg)
 
 type CustomError
   = Ooops
@@ -33,14 +31,30 @@ type CustomError
   | AlreadyTaken
   | InvalidSuperpower
 
-init : Model
-init = CruddyModels.init initTitle initialFields listFields setFormFields validate mapFieldsComponent .users
-
-initTitle : CruddyModels.Title
-initTitle = 
-  { single = "User"
-  , plural = "Users"
+type alias Model =
+  { form : Form CustomError User
+  , userMaybe : Maybe User
+  , entities : Entities
   }
+
+init : Model
+init =
+  { form = Form.initial initialFields validate
+  , userMaybe = Nothing 
+  , entities = initialEntities
+  }
+
+
+--type alias Model = CruddyModels.Model User CustomError 
+
+--init : Model
+--init = CruddyModels.init initTitle initialFields listFields setFormFields validate mapFieldsComponent .users
+
+--initTitle : CruddyModels.Title
+--initTitle = 
+  --{ single = "User"
+  --, plural = "Users"
+  --}
 
 initialFields : List ( String, Field.Field )
 initialFields =
@@ -73,63 +87,17 @@ setFormFields user =
     )
   ]
 
-listFields : CruddyModels.ListFields User
-listFields =
-  [ ("Id", \n -> .id n |> toString |> text )
-  , ("Name", \n -> .name n |> text )
-  , ("Email", \n -> .email n |> text )
-  , ("Admin", \n -> .admin n |> toString |> text )
-  ]
+--listFields : CruddyModels.ListFields User
+--listFields =
+  --[ ("Id", \n -> .id n |> toString |> text )
+  --, ("Name", \n -> .name n |> text )
+  --, ("Email", \n -> .email n |> text )
+  --, ("Admin", \n -> .admin n |> toString |> text )
+  --]
 
-mapFieldsComponent : Entities -> Form e a -> Html (Cruddy.Messages.Msg a)
-mapFieldsComponent entities form =
-  App.map PageFormMsg (fieldsCompoment entities form)
-
-fieldsCompoment : Entities -> Form e a -> Html Form.Msg
-fieldsCompoment entities form =
-  let
-    roleOptions =
-      ("", "--") :: (List.map (\i -> (i, String.toUpper i)) roles)
-
-    superpowerOptions =
-      List.map (\i -> (i, String.toUpper i)) superpowers
-
-  in
-    div
-      [ class "form-horizontal" ]
-      [ spanGroup "Id" 
-        (Form.getFieldAsString "id" form)
-        
-      , textGroup "Name" 
-        (Form.getFieldAsString "name" form)
-
-      , textGroup "Email address" 
-        (Form.getFieldAsString "email" form)
-
-      , checkboxGroup "Administrator" 
-        (Form.getFieldAsBool "admin" form)
-
-      , textGroup "Website" 
-        (Form.getFieldAsString "profile.website" form)
-
-      , selectGroup roleOptions "Role" 
-        (Form.getFieldAsString "profile.role" form)
-
-      , radioGroup superpowerOptions "Superpower" 
-        (Form.getFieldAsString "profile.superpower" form)
-
-      , textGroup "Age" 
-        (Form.getFieldAsString "profile.age" form)
-
-      , textAreaGroup "Bio" 
-        (Form.getFieldAsString "profile.bio" form)
-
-      --, case userMaybe of
-          --Just user ->
-            --p [ class "alert alert-success" ] [ text (toString user) ]
-          --Nothing ->
-            --text ""
-      ]
+--mapFieldsComponent : Entities -> Form e a -> Html (Cruddy.Messages.Msg a)
+--mapFieldsComponent entities form =
+  --App.map PageFormMsg (fieldsCompoment entities form)
 
 -- VALIDATION
 

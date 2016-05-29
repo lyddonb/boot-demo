@@ -11,6 +11,10 @@ import Form.Input as Input exposing (..)
 import Form.Error exposing (Error)
 import Form.Field exposing (Field(Radio, Text))
 
+container : List (Html msg) -> Html msg
+container content =
+  div [ class "container" ] content
+
 row : List (Html msg) -> Html msg
 row content =
   div [ class "row" ] content
