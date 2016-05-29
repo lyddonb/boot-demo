@@ -44,18 +44,6 @@ init =
   , entities = initialEntities
   }
 
-
---type alias Model = CruddyModels.Model User CustomError 
-
---init : Model
---init = CruddyModels.init initTitle initialFields listFields setFormFields validate mapFieldsComponent .users
-
---initTitle : CruddyModels.Title
---initTitle = 
-  --{ single = "User"
-  --, plural = "Users"
-  --}
-
 initialFields : List ( String, Field.Field )
 initialFields =
   [ ( "profile", Field.group
@@ -86,18 +74,6 @@ setFormFields user =
       ]
     )
   ]
-
---listFields : CruddyModels.ListFields User
---listFields =
-  --[ ("Id", \n -> .id n |> toString |> text )
-  --, ("Name", \n -> .name n |> text )
-  --, ("Email", \n -> .email n |> text )
-  --, ("Admin", \n -> .admin n |> toString |> text )
-  --]
-
---mapFieldsComponent : Entities -> Form e a -> Html (Cruddy.Messages.Msg a)
---mapFieldsComponent entities form =
-  --App.map PageFormMsg (fieldsCompoment entities form)
 
 -- VALIDATION
 

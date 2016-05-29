@@ -15,6 +15,7 @@ import Form.Field as Field
 import Bootstrap exposing (..)
 --import Cruddy.Page as CruddyPage
 import Cruddy.Components exposing (..)
+import Cruddy.Messages as CruddyMessages
 
 import Entities exposing (..)
 
@@ -23,20 +24,19 @@ import Users.Messages exposing (Msg(..))
 
 view : Model -> Html Msg
 view model =
-  page [ panel "Add a User" [ form model ]
-       , panel "List Users" [ listView (headers) (Dict.values model.entities.users) row ]
+  page [ panel "Add a User" [ App.map CruddyMsg (form model) ]
+       , panel "List Users" [ App.map CruddyMsg (listView (headers) (Dict.values model.entities.users) row) ]
        ]
-  --App.map PageMsg (CruddyPage.page model)
 
-form : Model -> Html Msg 
+form : Model -> Html (CruddyMessages.Msg User)
 form model =
   div
     []
-    [ App.map FormMsg (formFields model)
-    , formHandler (submitClick model.form) FormMsg initialFields
+    [ App.map CruddyMessages.FormMsg (formFields model)
+    , formHandler model.form initialFields
     ]
 
-row : User -> List (Html Msg)
+row : User -> List (Html (CruddyMessages.Msg User))
 row user =
   [ user.id |> toString |> text |> tableCell
   , user.name |> text |> tableCell
@@ -51,15 +51,6 @@ headers =
   , "Email"
   , "Admin"
   ]
-
-submitClick : Form a User -> Attribute Msg
-submitClick pageForm=
-  case Form.getOutput pageForm of
-    Just pageFormEntity ->
-      onClick (SubmitUser pageFormEntity)
-
-    Nothing ->
-      onClick (FormMsg Form.Submit)
 
 formFields : Model -> Html Form.Msg
 formFields {form} =

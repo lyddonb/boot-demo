@@ -10,6 +10,8 @@ import Form.Field as Field
 
 import Bootstrap exposing (..)
 
+import Cruddy.Messages exposing (Msg(..))
+
 page : List (Html msg) -> Html msg
 page content =
   container content
@@ -29,8 +31,17 @@ panel title content =
       content 
     ]
 
-formHandler : Attribute msg -> (Form.Msg -> msg) -> List ( String, Field.Field ) -> Html msg
-formHandler submitClick formMsg initialFields =
+formHandler : (Form b a) -> List ( String, Field.Field ) -> Html (Msg a)
+formHandler pageForm initialFields =
+  let
+    submitClick =
+    case Form.getOutput pageForm of
+      Just pageFormEntity ->
+        onClick (SubmitEntity pageFormEntity)
+
+      Nothing ->
+        onClick (FormMsg Form.Submit)
+  in
     formActions
     [ button
       [ class "btn btn-primary"
@@ -39,13 +50,13 @@ formHandler submitClick formMsg initialFields =
       [ text "Submit" ]
     , text " "
     , button
-      [ onClick (formMsg (Form.Reset initialFields))
+      [ onClick (FormMsg (Form.Reset initialFields))
       , class "btn btn-default"
       ]
       [ text "Reset" ]
     ]
 
-listView : List String -> List a -> (a -> List (Html msg)) -> Html msg
+listView : List String -> List a -> (a -> List (Html (Msg a))) -> Html (Msg a)
 listView headers items rowFunc =
   div
     []
@@ -66,41 +77,47 @@ listView headers items rowFunc =
       ]
     ]
 
-rows : List a -> (a -> List (Html msg)) -> List (List (Html msg))
+rows : List a -> (a -> List (Html (Msg a))) -> List (List (Html (Msg a)))
 rows items rowFunc =
   items
   |> List.reverse
-  |> List.map rowFunc
+  |> List.map (\a -> rowWithButtons a rowFunc)
+
+rowWithButtons : a -> (a -> List (Html (Msg a))) -> List (Html (Msg a))
+rowWithButtons entity rowFunc =
+    (List.append (rowFunc entity) [ editBtn entity 
+                                  , deleteBtn entity 
+                                  ]
+    )
 
 tableRow : List (Html msg) -> Html msg
 tableRow content =
   tr
     []
     content
-    -- TODO: Add row buttons
 
 tableCell : Html msg -> Html msg
 tableCell content =
   td [] [ content ]
 
---editBtn : a -> Html msg
---editBtn model =
-  --button
-    --[ class "btn btn-primary btn-xs" 
-    --, type' "button"
-    --, attribute "data-toggle" "modal"
-    --, attribute "data-target" "#editModal"
-    --, onClick (EditEntity model)
-    --]
-    --[ i [class "fa fa-pencil mr1" ] [], text "Edit" ]
+editBtn : a -> Html (Msg a)
+editBtn entity =
+  button
+    [ class "btn btn-primary btn-xs" 
+    , type' "button"
+    , attribute "data-toggle" "modal"
+    , attribute "data-target" "#editModal"
+    , onClick (EditEntity entity)
+    ]
+    [ i [class "fa fa-pencil mr1" ] [], text "Edit" ]
 
---deleteBtn : a -> Html msg
---deleteBtn model =
-  --button
-    --[ class "btn btn-danger btn-xs" 
-    --, onClick (DeleteEntity model) 
-    --]
-    --[ i [class "fa fa-trash mr1" ] [], text "Delete" ]
+deleteBtn : a -> Html (Msg a)
+deleteBtn model =
+  button
+    [ class "btn btn-danger btn-xs" 
+    , onClick (DeleteEntity model) 
+    ]
+    [ i [class "fa fa-trash mr1" ] [], text "Delete" ]
 
 tableHeaders : List String -> List (Html msg)
 tableHeaders headers =

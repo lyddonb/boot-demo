@@ -10,7 +10,7 @@ import Form exposing (Form)
 
 import List.Extra exposing (last)
 
---import Cruddy.Messages as CruddyMessages
+import Cruddy.Messages as CruddyMessages
 --import Cruddy.Update as CruddyUpdate
 --import Cruddy.Models as CruddyUpdate
 
@@ -25,10 +25,22 @@ update msg model =
     NoOp ->
       ( model, Cmd.none )
 
-    FormMsg formMsg ->
+    CruddyMsg cruddyMsg ->
+      let
+        (model, cmd) = cruddyUpdate cruddyMsg model
+      in
+        model ! [ cmd ]
+
+--cruddyUpdate : CruddyMessages.Msg {b | id: a} -> Model -> ( Model, Cmd msg )
+cruddyUpdate msg model =
+  case msg of
+    CruddyMessages.NoOp ->
+      ( model, Cmd.none )
+
+    CruddyMessages.FormMsg formMsg ->
       ({ model | form = Form.update formMsg model.form}, Cmd.none)
 
-    SubmitUser user ->
+    CruddyMessages.SubmitEntity user ->
        let
         -- HACK: Until we persist we need to get a new ID
         newId = (Dict.keys model.entities.users
@@ -42,6 +54,11 @@ update msg model =
       in
         ( updatedModel, Cmd.none)
 
+    CruddyMessages.EditEntity user ->
+      ( model, Cmd.none )
+
+    CruddyMessages.DeleteEntity user ->
+      ( model, Cmd.none )
      --let
         --( pageModel, _ ) = CruddyUpdate.update msg model
         --( updatedModel, fx ) = updateForm msg pageModel
