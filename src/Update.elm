@@ -7,43 +7,29 @@ import Messages exposing (..)
 import Models exposing (..)
 
 --import Entities exposing (..)
+import Users.Update as UsersUpdate
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update action model =
-  case action of
+update msg model =
+  case msg of
+
+    UserMsg userMsg ->
+      let
+        pModel = model.user
+
+        -- Pass the users from the AppModel down to the UserModel
+        ( pageModel, fx ) =
+          UsersUpdate.update userMsg ({ pModel | entities = model.entities })
+
+        -- Update user and users on the AppModel
+        updatedModel = { model | entities = pageModel.entities
+                               , user = pageModel}
+      in
+        ( updatedModel, Cmd.map UserMsg fx )
 
     NoOp ->
       ( model, Cmd.none )
-
-    --ShowPage page ->
-      --( set (pages => currentPage) page model, Effects.none )
-
-    --UserAction subAction ->
-      --let
-        --pModel = model.pages.user
-
-        ---- Pass the users from the AppModel down to the UserModel
-        --( pageModel, fx ) =
-          --User.Update.update subAction ({ pModel | entities = model.entities })
-
-        ---- Update user and users on the AppModel
-        --updatedModel = { model | entities = pageModel.entities }
-                        --|> set (pages => user) pageModel
-      --in
-        --( updatedModel, Effects.map UserAction fx )
-        
-    --ThingAction subAction ->
-      --let
-        --tModel = model.pages.thing
-
-        --( pageModel, fx ) =
-          --Thing.Update.update subAction ({ tModel | entities = model.entities })
-
-        --updatedModel = { model | entities = pageModel.entities }
-                        --|> set (pages => thing) pageModel
-      --in
-        --( updatedModel, Effects.map ThingAction fx )
 
 -- Navigation Update
 urlUpdate : Result String Page -> Model -> ( Model, Cmd Msg )

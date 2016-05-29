@@ -1,4 +1,4 @@
-module Entities (..) where
+module Entities exposing (..) 
 
 import Dict exposing (Dict)
 

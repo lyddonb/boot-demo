@@ -17,7 +17,7 @@ import View exposing (..)
 
 init : Result String Page -> (Model, Cmd Msg)
 init result =
-  urlUpdate result (Model Home)
+  urlUpdate result (initialModel)
 
 main = 
   Navigation.program (Navigation.makeParser hashParser)

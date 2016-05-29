@@ -1,5 +1,6 @@
 module Messages exposing (..) 
 
+import Users.Messages as UserMessages
 --import Models exposing (Page)
 --import User.Actions exposing (..)
 --import Thing.Actions exposing (..)
@@ -16,7 +17,8 @@ toHash page =
       "#users"
 
 type Msg
-  = NoOp
+  = UserMsg UserMessages.Msg
+  | NoOp
   --= UserAction User.Actions.UserAction
   --| ThingAction Thing.Actions.ThingAction
   --| ShowPage Page
