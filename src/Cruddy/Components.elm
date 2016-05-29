@@ -11,12 +11,28 @@ import Form.Field as Field
 import Bootstrap exposing (..)
 
 import Cruddy.Messages exposing (Msg(..))
+import Cruddy.Models exposing (..)
 
-page : List (Html msg) -> Html msg
-page content =
-  container content
+type alias FormFields a e = (Form e a -> Html Form.Msg)
 
-panel : String -> List (Html msg) -> Html (msg)
+type alias CruddyPage a e =
+  { newTitle : String
+  , listTitle : String
+  , formFields : FormFields a e
+  }
+
+initializeCruddy : String -> String -> FormFields a e -> CruddyPage a e
+initializeCruddy newTitle listTitle formFields = 
+  { newTitle = newTitle
+  , listTitle = listTitle
+  , formFields = formFields
+  }
+
+page : List (String, Html (Msg a)) -> Html (Msg a)
+page items =
+  container (List.map (\(t, i) -> panel t i) items)
+
+panel : String -> Html msg -> Html (msg)
 panel title content =
   div
     [ class "panel panel-default" ]
@@ -28,10 +44,18 @@ panel title content =
       ]
     , div
       [ class "panel-body" ]
-      content 
+      [ content ] 
     ]
 
-formHandler : (Form b a) -> List ( String, Field.Field ) -> Html (Msg a)
+newForm : (Form e a -> Html Form.Msg) -> Model a e -> Html (Msg a)
+newForm fields model =
+  div
+    []
+    [ App.map FormMsg (fields model.form)
+    , formHandler model.form model.initialFields
+    ]
+
+formHandler : Form e a -> List ( String, Field.Field ) -> Html (Msg a)
 formHandler pageForm initialFields =
   let
     submitClick =
@@ -56,26 +80,128 @@ formHandler pageForm initialFields =
       [ text "Reset" ]
     ]
 
-listView : List String -> List a -> (a -> List (Html (Msg a))) -> Html (Msg a)
-listView headers items rowFunc =
+listView : Html (Msg a) -> Html (Msg a) -> Html (Msg a)
+listView form lTable =
   div
     []
     [ div
       []
-      [ --modal model
-      --, table
-      table
-        [ class "table table-striped table-hover table-condensed" ]
-        [ thead
-          []
-          [ tr
-            []
-            (tableHeaders headers)
+      [ form
+      , lTable 
+      ]
+    ]
+
+listTable : List String -> List a -> (a -> List (Html (Msg a))) -> Html (Msg a)
+listTable headers items rowFunc =
+  table
+    [ class "table table-striped table-hover table-condensed" ]
+    [ thead
+      []
+      [ tr
+        []
+        (tableHeaders headers)
+      ]
+      , tbody [] (List.map tableRow (rows items rowFunc))
+    ]
+
+editForm : (Form e a -> Html Form.Msg) -> Model a e -> Html (Msg a)
+editForm formFields model =
+  let
+    form = App.map EditFormMsg (formFields model.editForm)
+  in
+    modal form model
+
+modal : Html (Msg a) -> Model a e -> Html (Msg a)
+modal form model =
+  div
+    [ class "modal fade"
+    , id "editModal"
+    , attribute "tabindex" "-1"
+    , attribute "role" "dialog"
+    , attribute "aria-labelledby" "editModalLabel"
+    , attribute "tabindex" "-1"
+    ]
+    [ div
+      [ class "modal-dialog" 
+      , attribute "role" "document" 
+      ]
+      [ div
+        [ class "modal-content" ]
+        [ div
+          [ class "modal-header" ]
+          [ button
+            [ class "close"
+            , attribute "data-dismiss" "modal"
+            , attribute "aria-label" "Close"
+            ]
+            [ span
+              [ attribute "aria-hidden" "true" ]
+              [ text "×" ]
+            ]
+          , h4
+            [ class "modal-title"
+            , id "userEditModalLabel"
+            ]
+            [ text "Edit ..TODO..." ]
           ]
-          , tbody [] (List.map tableRow (rows items rowFunc))
+        , div
+          [ class "modal-body" ]
+          [ p
+            []
+            [ form ]
+          ]
+        , div
+          [ class "modal-footer" ]
+          [ modalFormHandler model 
+          ]
         ]
       ]
     ]
+
+modalFormHandler : Model a e -> Html (Msg a)
+modalFormHandler model =
+  let
+    resetFunc = 
+    case model.editEntityMaybe of
+      Just entity ->
+        model.setEditFormFields entity
+
+      Nothing ->
+        model.initialFields
+
+
+    submitClick =
+    case Form.getOutput model.editForm of
+      Just modalFormEntity ->
+        onClick (SubmitEditEntity (Debug.log "Form ent" modalFormEntity))
+
+      Nothing ->
+        onClick (EditFormMsg Form.Submit)
+  in
+    div
+      []
+      [
+        formActions
+        [ button
+          [ submitClick
+          , class "btn btn-primary"
+          , attribute "data-dismiss" "modal"
+          ]
+          [ text "Submit" ]
+        --, text " "
+        , button
+          [ onClick (EditFormMsg (Form.Reset resetFunc))
+          , class "btn btn-default"
+          ]
+          [ text "Reset" ]
+        , button
+          [ class "btn btn-default"
+          , type' "button"
+          , attribute "data-dismiss" "modal"
+          ]
+          [ text "Close" ]
+        ]
+      ]
 
 rows : List a -> (a -> List (Html (Msg a))) -> List (List (Html (Msg a)))
 rows items rowFunc =

@@ -14,8 +14,7 @@ import Form.Validate as Validate exposing (..)
 
 import Bootstrap exposing (..)
 
---import Cruddy.Messages exposing (Msg(PageFormMsg))
---import Cruddy.Models as CruddyModels
+import Cruddy.Models as CruddyModels
 
 import Entities exposing (..)
 
@@ -32,15 +31,13 @@ type CustomError
   | InvalidSuperpower
 
 type alias Model =
-  { form : Form CustomError User
-  , userMaybe : Maybe User
+  { cruddy : CruddyModels.Model User CustomError
   , entities : Entities
   }
 
 init : Model
 init =
-  { form = Form.initial initialFields validate
-  , userMaybe = Nothing 
+  { cruddy = CruddyModels.init initialFields validate setFormFields
   , entities = initialEntities
   }
 

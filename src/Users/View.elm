@@ -24,19 +24,21 @@ import Users.Messages exposing (Msg(..))
 
 view : Model -> Html Msg
 view model =
-  page [ panel "Add a User" [ App.map CruddyMsg (form model) ]
-       , panel "List Users" [ App.map CruddyMsg (listView (headers) (Dict.values model.entities.users) row) ]
-       ]
+  cruddyPage (initializeCruddy "User" "Users" formFields) model
 
-form : Model -> Html (CruddyMessages.Msg User)
-form model =
-  div
-    []
-    [ App.map CruddyMessages.FormMsg (formFields model)
-    , formHandler model.form initialFields
-    ]
+cruddyPage : CruddyPage User CustomError -> Model -> Html Msg
+cruddyPage cruddyPage model =
+  App.map CruddyMsg (
+    page [ ("Add a " ++ cruddyPage.newTitle, (newForm cruddyPage.formFields model.cruddy)) 
+         , ("View " ++ cruddyPage.listTitle, (listView (editForm cruddyPage.formFields model.cruddy) (table model)) )
+         ]
+       )
 
-row : User -> List (Html (CruddyMessages.Msg User))
+table : Model -> Html (CruddyMessages.Msg User)
+table model =
+  listTable (headers) (Dict.values model.entities.users) row
+
+row : User -> List (Html msg)
 row user =
   [ user.id |> toString |> text |> tableCell
   , user.name |> text |> tableCell
@@ -52,8 +54,8 @@ headers =
   , "Admin"
   ]
 
-formFields : Model -> Html Form.Msg
-formFields {form} =
+formFields : Form CustomError User -> Html Form.Msg
+formFields form =
   let
     roleOptions =
       ("", "--") :: (List.map (\i -> (i, String.toUpper i)) roles)
