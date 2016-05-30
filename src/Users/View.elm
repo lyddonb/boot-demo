@@ -22,23 +22,19 @@ import Entities exposing (..)
 import Users.Models exposing (..)
 import Users.Messages exposing (Msg(..))
 
+-- TODO: Move Items to Cruddy Model (it's data fool!)
+
 view : Model -> Html Msg
 view model =
-  cruddyPage (initializeCruddy "User" "Users" formFields) model
+  App.map CruddyMsg (page (initializeCruddy 
+        "User" 
+        "Users" 
+        formFields 
+        headers
+        row
+       ) model.cruddy )
 
-cruddyPage : CruddyPage User CustomError -> Model -> Html Msg
-cruddyPage cruddyPage model =
-  App.map CruddyMsg (
-    page [ ("Add a " ++ cruddyPage.newTitle, (newForm cruddyPage.formFields model.cruddy)) 
-         , ("View " ++ cruddyPage.listTitle, (listView (editForm cruddyPage.formFields model.cruddy) (table model)) )
-         ]
-       )
-
-table : Model -> Html (CruddyMessages.Msg User)
-table model =
-  listTable (headers) (Dict.values model.entities.users) row
-
-row : User -> List (Html msg)
+row : RowFields User
 row user =
   [ user.id |> toString |> text |> tableCell
   , user.name |> text |> tableCell
@@ -54,7 +50,7 @@ headers =
   , "Admin"
   ]
 
-formFields : Form CustomError User -> Html Form.Msg
+formFields : FormFields User CustomError
 formFields form =
   let
     roleOptions =

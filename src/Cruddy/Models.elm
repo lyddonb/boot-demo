@@ -12,10 +12,11 @@ type alias Model a e =
   , initialFields : List ( String, Field.Field )
   , validation : Validation e a
   , setEditFormFields : a -> List ( String, Field.Field )
+  , listItems : List a
   }
 
-init : List ( String, Field.Field ) -> Validation e a -> (a -> List ( String, Field.Field )) -> Model a e
-init initialFields validate setEditFormFields =
+init : List ( String, Field.Field ) -> Validation e a -> (a -> List ( String, Field.Field )) -> List a -> Model a e
+init initialFields validate setEditFormFields listItems =
   { form = Form.initial initialFields validate
   , editForm = Form.initial initialFields validate
   , entityMaybe = Nothing 
@@ -23,4 +24,5 @@ init initialFields validate setEditFormFields =
   , initialFields = initialFields
   , validation = validate
   , setEditFormFields = setEditFormFields
+  , listItems = listItems
   }

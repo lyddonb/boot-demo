@@ -14,23 +14,31 @@ import Cruddy.Messages exposing (Msg(..))
 import Cruddy.Models exposing (..)
 
 type alias FormFields a e = (Form e a -> Html Form.Msg)
+type alias RowFields a = (a -> List (Html (Msg a)))
 
 type alias CruddyPage a e =
   { newTitle : String
   , listTitle : String
   , formFields : FormFields a e
+  , headers : List String
+  , rowFields : RowFields a 
   }
 
-initializeCruddy : String -> String -> FormFields a e -> CruddyPage a e
-initializeCruddy newTitle listTitle formFields = 
+initializeCruddy : String -> String -> FormFields a e -> List String -> RowFields a -> CruddyPage a e
+initializeCruddy newTitle listTitle formFields headers rowFields = 
   { newTitle = newTitle
   , listTitle = listTitle
   , formFields = formFields
+  , headers = headers
+  , rowFields = rowFields
   }
 
-page : List (String, Html (Msg a)) -> Html (Msg a)
-page items =
-  container (List.map (\(t, i) -> panel t i) items)
+page : CruddyPage a e -> Model a e -> Html (Msg a)
+page cp model =
+  container 
+    [ panel ("Add a " ++ cp.newTitle) (newForm cp.formFields model)
+    , panel ("View " ++ cp.listTitle) (listView cp model) 
+    ]
 
 panel : String -> Html msg -> Html (msg)
 panel title content =
@@ -47,7 +55,7 @@ panel title content =
       [ content ] 
     ]
 
-newForm : (Form e a -> Html Form.Msg) -> Model a e -> Html (Msg a)
+newForm : FormFields a e -> Model a e -> Html (Msg a)
 newForm fields model =
   div
     []
@@ -80,28 +88,28 @@ formHandler pageForm initialFields =
       [ text "Reset" ]
     ]
 
-listView : Html (Msg a) -> Html (Msg a) -> Html (Msg a)
-listView form lTable =
+listView : CruddyPage a e -> Model a e -> Html (Msg a)
+listView cp model =
   div
     []
     [ div
       []
-      [ form
-      , lTable 
+      [ editForm cp.formFields model
+      , listTable cp model
       ]
     ]
 
-listTable : List String -> List a -> (a -> List (Html (Msg a))) -> Html (Msg a)
-listTable headers items rowFunc =
+listTable : CruddyPage a e -> Model a e -> Html (Msg a)
+listTable cp model =
   table
     [ class "table table-striped table-hover table-condensed" ]
     [ thead
       []
       [ tr
         []
-        (tableHeaders headers)
+        (tableHeaders cp.headers)
       ]
-      , tbody [] (List.map tableRow (rows items rowFunc))
+      , tbody [] (List.map tableRow (rows model.listItems cp.rowFields))
     ]
 
 editForm : (Form e a -> Html Form.Msg) -> Model a e -> Html (Msg a)

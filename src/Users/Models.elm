@@ -1,5 +1,7 @@
 module Users.Models exposing (..)
 
+import Dict exposing (Dict)
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.App as App
@@ -37,9 +39,13 @@ type alias Model =
 
 init : Model
 init =
-  { cruddy = CruddyModels.init initialFields validate setFormFields
-  , entities = initialEntities
-  }
+  let
+    entities = initialEntities
+    listEntities = (Dict.values entities.users)
+  in
+    { cruddy = CruddyModels.init initialFields validate setFormFields listEntities
+    , entities = entities
+    }
 
 initialFields : List ( String, Field.Field )
 initialFields =
