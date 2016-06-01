@@ -28,9 +28,12 @@ update msg model =
     CruddyMsg cruddyMsg ->
       let
         (cruddyModel, _) = CruddyUpdate.update cruddyMsg model.cruddy
-        (updatedModel, updatedCruddyMsg) = cruddyUpdate cruddyMsg { model | cruddy = cruddyModel }
+
+        (updatedModel, updatedCruddyMsg) = cruddyUpdate cruddyMsg model
+
+        crudModel = { cruddyModel | listItems = (Dict.values updatedModel.entities.users) }
       in
-        updatedModel ! [ Cmd.map CruddyMsg updatedCruddyMsg ]
+        { updatedModel | cruddy = crudModel } ! [ Cmd.map CruddyMsg updatedCruddyMsg ]
 
 cruddyUpdate : CruddyMessages.Msg User -> Model -> ( Model, Cmd a )
 cruddyUpdate msg model =
